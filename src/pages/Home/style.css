@@ -1,0 +1,34 @@
+*{
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+.title{
+    width: 100%;
+    text-align: center;
+}
+
+.months{
+    display: grid;
+    grid-template-columns: auto auto auto;
+    gap: 50px 80px;
+}
+
+a{
+    text-decoration: none;
+}
+
+.custom-dropdown:focus {
+    outline: none; /* Remove o contorno ao focar */
+}
+
+.custom-dropdown {
+    border: none !important; /* Remove a borda, caso necessário */
+    box-shadow: none !important; /* Remove qualquer sombra que possa parecer uma borda */
+}
+
+
+
+
+
