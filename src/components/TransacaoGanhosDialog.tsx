@@ -7,7 +7,7 @@ import { Dropdown } from "primereact/dropdown";
 import { Calendar } from "primereact/calendar";
 
 import { useAppDispatch } from "../redux/hooks";
-import { ITransacao } from "../pages/Home/Mes/Rateio";
+import { ITransacao } from "../pages/Home/Mes/Features/Rateio";
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import api from "../config/api";

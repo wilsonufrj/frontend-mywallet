@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Chart } from "primereact/chart";
-import { ITransacaoGastos } from "../pages/Home/Mes/Rateio";
+import { ITransacaoGastos } from "../pages/Home/Mes/Features/Rateio";
 
 declare interface IPropsBarChart {
     gastos: ITransacaoGastos[]

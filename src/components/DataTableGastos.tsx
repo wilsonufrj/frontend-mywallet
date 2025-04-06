@@ -9,7 +9,7 @@ import { removerGastos } from "../pages/Home/homeSlice";
 import { InputText } from "primereact/inputtext";
 import { ColumnGroup } from "primereact/columngroup";
 import { Row } from "primereact/row";
-import { ITransacao, ITransacaoGastos } from "../pages/Home/Mes/Rateio";
+import { ITransacao, ITransacaoGastos } from "../pages/Home/Mes/Features/Rateio";
 
 
 declare interface IPropsDataTableGanhos {

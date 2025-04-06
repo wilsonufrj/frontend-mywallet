@@ -1,7 +1,7 @@
 import { Usuario } from "./Usuario"
 
 export interface Carteira {
-    id: number | null
+    id: number | undefined
     nome: string
     usuarios: Usuario[]
     meses: []

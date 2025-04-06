@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Checkbox } from 'primereact/checkbox';
 import { Dropdown } from 'primereact/dropdown';
 
@@ -156,7 +156,7 @@ export default function Home() {
             <div className='flex-initial flex'>
                 <div className='flex align-items-start align-items-center justify-content-center'>
                     <label>Saiba mais</label>
-                    <i className="pi pi-info-circle" style={{ fontSize: '1.5rem',color: 'var(--primary-color)' }}></i>
+                    <i className="pi pi-info-circle" style={{ fontSize: '1.5rem', color: 'var(--primary-color)' }}></i>
                 </div>
             </div>
         )

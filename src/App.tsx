@@ -9,9 +9,9 @@ import "/node_modules/primeflex/primeflex.css"
 import { Provider } from 'react-redux';
 import { store } from './redux/store';
 import Login from './pages/Home/Login/Login';
-import Carteira from './pages/Home/Carteira/Carteira';
+import Carteiras from './pages/Home/Carteira/Carteiras';
+import CarteiraDetail from './pages/Home/Carteira/CarteiraDetail';
 import Mes from './pages/Home/Mes/Mes';
-import Resumo from './pages/Home/Mes/Resumo';
 
 
 function App() {
@@ -20,9 +20,9 @@ function App() {
       <Router>
         <Routes>
           <Route path='/' element={<Login />} />
-          <Route path='/carteira' element={<Carteira />} />
+          <Route path='/carteiras' element={<Carteiras />} />
+          <Route path='/carteira/:id' element={<CarteiraDetail />} />
           <Route path='/mes/:id' element={<Mes />} />
-          <Route path='/resumo/:id' element={<Resumo />} />
         </Routes>
       </Router>
     </Provider>

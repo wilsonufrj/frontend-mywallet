@@ -33,7 +33,7 @@ const Login: React.FC = () => {
 
 
     if (authState.isAuthenticated) {
-        return <Navigate to="/carteira" replace />;
+        return <Navigate to="/carteiras" replace />;
     }
 
     const handleLogin = () => {

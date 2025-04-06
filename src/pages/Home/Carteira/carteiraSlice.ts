@@ -1,5 +1,4 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
 import { RootState } from '../../../redux/store';
 import { Carteira } from '../../../Domain/Carteira';
 import api from '../../../config/api';
@@ -7,10 +6,13 @@ import api from '../../../config/api';
 
 export interface CarteirasUsuarioState {
     carteiras: Carteira[]
+    carteiraSelected: Carteira
 }
 
 const initialState: CarteirasUsuarioState = {
-    carteiras: []
+    carteiras: [],
+    carteiraSelected: {} as Carteira
+
 };
 
 
@@ -21,7 +23,15 @@ export const fetchCarteiras = createAsyncThunk(
         const state = getState() as RootState;
         const idUsuario: number = state.auth.idUsuario;
 
-        const response = await api.get(`carteira/${idUsuario}`);
+        const response = await api.get(`carteira/usuario/${idUsuario}`);
+        return response.data;
+    }
+);
+
+export const selecionaCarteira = createAsyncThunk(
+    'carteira/fetchCarteiraDetail',
+    async (idCarteira: number) => {
+        const response = await api.get(`carteira/${idCarteira}`);
         return response.data;
     }
 );
@@ -50,13 +60,15 @@ const carteiraSlice = createSlice({
         }
     },
     extraReducers: (builder) => {
-        builder.addCase(fetchCarteiras.fulfilled, (state, action: PayloadAction<any>) => {
+        builder.addCase(fetchCarteiras.fulfilled, (state, action: PayloadAction<Carteira[]>) => {
             state.carteiras = action.payload;
         });
         builder.addCase(criarCarteira.fulfilled, (state, action: PayloadAction<Carteira>) => {
             state.carteiras.push(action.payload);
-        }
-        );
+        });
+        builder.addCase(selecionaCarteira.fulfilled, (state, action: PayloadAction<Carteira>) => {
+            state.carteiraSelected = action.payload;
+        });
     }
 });
 

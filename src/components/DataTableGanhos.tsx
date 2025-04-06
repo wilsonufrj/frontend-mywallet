@@ -8,7 +8,7 @@ import { Row } from "primereact/row";
 import { Button } from "primereact/button";
 import { useAppDispatch } from "../redux/hooks";
 import { removerGanhos } from "../pages/Home/homeSlice";
-import { ITransacao } from "../pages/Home/Mes/Rateio";
+import { ITransacao } from "../pages/Home/Mes/Features/Rateio";
 
 declare interface IPropsDataTableGanhos {
     transacoes: ITransacao[]

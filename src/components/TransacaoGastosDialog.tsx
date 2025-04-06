@@ -7,7 +7,7 @@ import { Dropdown } from "primereact/dropdown";
 import { Calendar } from "primereact/calendar";
 import { useAppDispatch } from "../redux/hooks";
 import { adicionarEditarGastos } from "../pages/Home/homeSlice";
-import { ITransacaoGastos } from "../pages/Home/Mes/Rateio";
+import { ITransacaoGastos } from "../pages/Home/Mes/Features/Rateio";
 
 declare interface IPropsTransacaoGanhosDialog {
     transacao: ITransacaoGastos

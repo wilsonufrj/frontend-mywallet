@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
-import { IDropdown } from "../../../components/TransacaoGastosDialog";
+import { IDropdown } from "../../../../components/TransacaoGastosDialog";
 import { Dropdown } from "primereact/dropdown";
 import { ColumnGroup } from "primereact/columngroup";
 import { Row } from "primereact/row";
 import { Tag } from "primereact/tag";
-import { useAppDispatch } from "../../../redux/hooks";
-import { adicionarEditarGastos } from "../homeSlice";
+import { useAppDispatch } from "../../../../redux/hooks";
+import { adicionarEditarGastos } from "../../homeSlice";
 
 declare interface IPropsRateio {
     gastos: ITransacaoGastos[]
