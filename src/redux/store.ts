@@ -1,12 +1,10 @@
 import { configureStore } from '@reduxjs/toolkit'
-import homeSlice from '../pages/Home/homeSlice'
 import authReducer from '../pages/Home/Login/authSlice'
 import carteiraReducer from '../pages/Home/Carteira/carteiraSlice'
 import mesReducer from '../pages/Home/Mes/mesSlice'
 
 export const store = configureStore({
   reducer: {
-    home: homeSlice,
     auth: authReducer,
     carteira: carteiraReducer,
     mes: mesReducer,

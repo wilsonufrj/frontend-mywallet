@@ -114,7 +114,7 @@ const Carteiras: React.FC = () => {
                         className='ml-2'
                         label="Logout"
                         icon="pi pi-sign-out"
-                        onClick={() => navigate('')}
+                        onClick={() => navigate('/')}
                     />
                 </div>
             </div>

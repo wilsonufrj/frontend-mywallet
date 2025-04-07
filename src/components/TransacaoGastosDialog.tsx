@@ -6,11 +6,11 @@ import { Button } from "primereact/button";
 import { Dropdown } from "primereact/dropdown";
 import { Calendar } from "primereact/calendar";
 import { useAppDispatch } from "../redux/hooks";
-import { adicionarEditarGastos } from "../pages/Home/homeSlice";
-import { ITransacaoGastos } from "../pages/Home/Mes/Features/Rateio";
+import { Transacao } from "../Domain/Transacao";
+import { criaTransacaoMes, editarTransacaoMes } from "../pages/Home/Mes/mesSlice";
 
 declare interface IPropsTransacaoGanhosDialog {
-    transacao: ITransacaoGastos
+    transacao: Transacao
     dialogState: boolean
     setDialogState: Function
 }
@@ -23,8 +23,7 @@ export declare interface IDropdown {
 const TransacaoGastosDialog = (props: IPropsTransacaoGanhosDialog) => {
     const dispatch = useAppDispatch();
 
-    const [transacaoData, setTransacaoData] = useState<ITransacaoGastos>({ ...props.transacao });
-
+    const [transacaoData, setTransacaoData] = useState<Transacao>({ ...props.transacao });
 
 
     const bancos: IDropdown[] = [
@@ -55,7 +54,9 @@ const TransacaoGastosDialog = (props: IPropsTransacaoGanhosDialog) => {
         <React.Fragment>
             <Button label="Cancelar" icon="pi pi-times" outlined onClick={hideDialog} />
             <Button label="Salvar" icon="pi pi-check" onClick={() => {
-                dispatch(adicionarEditarGastos(transacaoData))
+                transacaoData.id === null
+                    ? dispatch(criaTransacaoMes({ transacao: transacaoData, idMes: 0 }))
+                    : dispatch(editarTransacaoMes(transacaoData))
                 props.setDialogState(false);
             }} />
         </React.Fragment>
@@ -103,7 +104,10 @@ const TransacaoGastosDialog = (props: IPropsTransacaoGanhosDialog) => {
                     <Dropdown
                         id="tipoGasto"
                         value={handlerDropdown(transacaoData, tipoGasto, "tipoGasto")}
-                        onChange={(e) => setTransacaoData({ ...transacaoData, tipoGasto: e.target.value.code })}
+                        onChange={(e) => {
+                            console.log("decidir o que fazer depois")
+                            //setTransacaoData({ ...transacaoData, tipoGasto: e.target.value.code })
+                        }}
                         options={tipoGasto}
                         optionLabel="name"
                         placeholder="Selecione o Tipo"

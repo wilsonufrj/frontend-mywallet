@@ -7,7 +7,6 @@ import { ColumnGroup } from "primereact/columngroup";
 import { Row } from "primereact/row";
 import { Tag } from "primereact/tag";
 import { useAppDispatch } from "../../../../redux/hooks";
-import { adicionarEditarGastos } from "../../homeSlice";
 
 declare interface IPropsRateio {
     gastos: ITransacaoGastos[]
@@ -101,7 +100,7 @@ const Rateio: React.FC<IPropsRateio> = (props) => {
     const onCellEditComplete = (e: any) => {
         const { newValue, field, rowData } = e;
         const updatedTransacao = { ...rowData, [field]: newValue.status || newValue };
-        dispatch(adicionarEditarGastos(updatedTransacao));
+        //dispatch(adicionarEditarGastos(updatedTransacao));
     };
 
     const cellEditor = (options: any) => {

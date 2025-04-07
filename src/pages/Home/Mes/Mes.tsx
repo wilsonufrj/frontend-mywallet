@@ -1,31 +1,40 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { TabPanel, TabView } from "primereact/tabview";
 
 import Planilhas from "./Features/Planilhas";
-import Rateio, { ITransacaoGastos } from "./Features/Rateio";
+import Rateio from "./Features/Rateio";
 import { Button } from "primereact/button";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Balanco from "./Features/Balanco";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../redux/store";
+import { Carteira } from "../../../Domain/Carteira";
+import { useAppDispatch } from "../../../redux/hooks";
+import { fetchBalanco, MesState } from "./mesSlice";
 
 const Mes = () => {
+    const dispatch = useAppDispatch();
 
+    const carteira: Carteira = useSelector((state: RootState) => state.carteira.carteiraSelected);
+    const mes: MesState = useSelector((state: RootState) => state.mes);
     const navigate = useNavigate();
-    const location = useLocation();
 
-    const { dados } = location.state ?? { dados: undefined };
+    useEffect(() => {
+        dispatch(fetchBalanco(mes.id ?? 0));
+    }, [])
 
     return (
         <div className="p-4">
             <div id="Title">
                 <div className="flex justify-content-center font-bold text-5xl m-3">
-                    <span>{dados.nome}</span>
+                    <span>{mes.nome}</span>
                 </div>
                 <div className='flex'>
 
                     <Button
                         label="Voltar para Carteira"
                         icon="pi pi-wallet"
-                        onClick={() => navigate('/carteira')}
+                        onClick={() => navigate(`/carteira/${carteira.id}`)}
                     />
                     <Button
                         className='ml-2'
@@ -36,22 +45,10 @@ const Mes = () => {
                 </div>
                 <TabView>
                     <TabPanel header="Balanço" leftIcon="pi pi-calculator m-2">
-                        <Balanco
-                            ganhosMes={10000}
-                            gasto={1000}
-                            saldoAtual={4700}
-                            saldoInvestimentoMes={1000}
-                            saldoMesSeguinte={3700}
-                            dadosGastos={[
-                                { id: 1, descricao: "Transporte", valor: 300 } as ITransacaoGastos,
-                                { id: 2, descricao: "Lazer", valor: 200 } as ITransacaoGastos
-                            ]}
-                        />
+                        <Balanco />
                     </TabPanel>
                     <TabPanel header="Planilhas" leftIcon="pi pi-money-bill m-2">
-                        <Planilhas dadosGanhos={[]}
-                            dadosGastos={[]}
-                        />
+                        <Planilhas />
                     </TabPanel>
                     <TabPanel header="Rateio" leftIcon="pi pi-percentage m-2">
                         <Rateio gastos={[]} />

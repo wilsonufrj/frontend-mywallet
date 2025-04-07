@@ -2,6 +2,7 @@ import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import { RootState } from '../../../redux/store';
 import { Carteira } from '../../../Domain/Carteira';
 import api from '../../../config/api';
+import { Mes } from '../../../Domain/Mes';
 
 
 export interface CarteirasUsuarioState {
@@ -51,6 +52,18 @@ export const criarCarteira = createAsyncThunk(
     }
 );
 
+export const criarNovoMes = createAsyncThunk(
+    'mes/criarNovoMes',
+    async (novoMes: Mes, { rejectWithValue }) => {
+        try {
+            const response = await api.post('mes', novoMes);
+            return response.data;
+        } catch (error: any) {
+            return rejectWithValue(error.response?.data || 'Erro ao criar novo mês');
+        }
+    }
+);
+
 const carteiraSlice = createSlice({
     name: 'carteira',
     initialState,
@@ -69,6 +82,21 @@ const carteiraSlice = createSlice({
         builder.addCase(selecionaCarteira.fulfilled, (state, action: PayloadAction<Carteira>) => {
             state.carteiraSelected = action.payload;
         });
+        builder
+            .addCase(criarNovoMes.pending, (state) => {
+                // Handle pending state if needed
+            })
+            .addCase(criarNovoMes.fulfilled, (state, action: PayloadAction<Mes>) => {
+                let carteira = state.carteiraSelected;
+                if (carteira) {
+                    carteira.meses.push(action.payload);
+                    state.carteiraSelected = { ...carteira };
+                }
+
+            })
+            .addCase(criarNovoMes.rejected, (state, action) => {
+                // Handle error state if needed
+            });
     }
 });
 

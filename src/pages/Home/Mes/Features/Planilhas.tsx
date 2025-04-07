@@ -1,22 +1,22 @@
+import { useSelector } from "react-redux";
 import DataTableGanhos from "../../../../components/DataTableGanhos";
 import DataTableGastos from "../../../../components/DataTableGastos";
+import { Transacao } from "../../../../Domain/Transacao";
 import { ITransacao, ITransacaoGastos } from "./Rateio";
+import { RootState } from "../../../../redux/store";
 
 
-declare interface IProspPlanilhas {
-    dadosGanhos: ITransacao[],
-    dadosGastos: ITransacaoGastos[]
-}
 
-const Planilhas = (props: IProspPlanilhas) => {
+const Planilhas = () => {
+
     return (
         <div className="grid">
             <div className="col-12">
-                <DataTableGanhos titulo="Ganhos" transacoes={props.dadosGanhos} />
+                <DataTableGanhos titulo="Ganhos" />
             </div>
-            <div className="col-12">
-                <DataTableGastos titulo="Gastos" transacoes={props.dadosGastos} />
-            </div>
+            {/* <div className="col-12">
+                <DataTableGastos titulo="Gastos" />
+            </div> */}
         </div>
     )
 }

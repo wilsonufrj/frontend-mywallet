@@ -5,8 +5,8 @@ import { Status } from "./Status";
 import { TipoTransacao } from "./TipoTransacao";
 
 export interface Transacao {
-    id: number;
-    data: Date;
+    id: number | null;
+    data: string;
     descricao: string;
     valor: number;
     quantasVezes: number;
@@ -15,4 +15,5 @@ export interface Transacao {
     status: Status;
     responsavel: Responsavel;
     tipoTransacao: TipoTransacao;
+    receita: boolean;
 }

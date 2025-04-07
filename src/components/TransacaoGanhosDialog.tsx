@@ -7,25 +7,37 @@ import { Dropdown } from "primereact/dropdown";
 import { Calendar } from "primereact/calendar";
 
 import { useAppDispatch } from "../redux/hooks";
-import { ITransacao } from "../pages/Home/Mes/Features/Rateio";
-import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import api from "../config/api";
+import { Transacao } from "../Domain/Transacao";
+import { Banco } from "../Domain/Banco";
+import { FormaPagamento } from "../Domain/FormaPagamento";
+import { Status } from "../Domain/Status";
+import { Responsavel } from "../Domain/Responsavel";
+import { TipoTransacao } from "../Domain/TipoTransacao";
+import { RootState } from "../redux/store";
+import { criaTransacaoMes } from "../pages/Home/Mes/mesSlice";
 
 declare interface PropsTransacaoGanhosDialog {
-    transacao: ITransacao
+    transacao: Transacao
     dialogState: boolean
     setDialogState: Function
 }
+
+declare interface IDropdown {
+    code: string,
+    name: string
+}
+
 const TransacaoGanhosDialog = (props: PropsTransacaoGanhosDialog) => {
 
     const dispatch = useAppDispatch();
 
-    const { id } = useParams<{ id: string }>();
-    const idUsuario = useSelector((state: any) => state.auth.idUsuario);
+    const idUsuario: number = useSelector((state: RootState) => state.auth.idUsuario);
+    const mesId: (number | null) = useSelector((state: RootState) => state.mes.id);
 
-    const [transacaoData, setTransacaoData] = useState<ITransacao>({} as ITransacao);
-    const [bancos, setBancos] = useState<any[]>([]);
+    const [transacaoData, setTransacaoData] = useState<Transacao>({} as Transacao);
+    const [bancos, setBancos] = useState<IDropdown[]>([]);
 
     useEffect(() => {
         setTransacaoData({ ...props.transacao })
@@ -48,28 +60,32 @@ const TransacaoGanhosDialog = (props: PropsTransacaoGanhosDialog) => {
         <React.Fragment>
             <Button label="Cancel" icon="pi pi-times" outlined onClick={hideDialog} />
             <Button label="Save" icon="pi pi-check" onClick={() => {
-                api.post("transacao", {
+
+                let addTransacao = {
+                    id: null,
                     data: transacaoData.data,
                     descricao: transacaoData.descricao,
                     valor: transacaoData.valor,
                     quantasVezes: 0,
-                    banco: { id: transacaoData.banco },
-                    formaPagamento: { id: 1 },
-                    status: { id: 1 },
-                    responsavel: { id: idUsuario },
-                    mes: { id: id },
-                    tipoTransacao: { id: 1 },
-                    isReceita: true
-                })
-                setTransacaoData({} as ITransacao);
+                    banco: transacaoData.banco,
+                    formaPagamento: { id: 1 } as FormaPagamento,
+                    status: { id: 1 } as Status,
+                    responsavel: { id: idUsuario } as Responsavel,
+                    tipoTransacao: { id: 1 } as TipoTransacao,
+                    receita: true
+                } as Transacao
+
+                dispatch(criaTransacaoMes({ transacao: addTransacao, idMes: Number(mesId) }))
+
+                setTransacaoData({} as Transacao);
                 props.setDialogState(false);
             }} />
         </React.Fragment>
     );
 
     const handlerSelecionarBanco = () => {
-        if (transacaoData) {
-            let bancoSelecionado = bancos.find(item => item.code === transacaoData.banco)
+        if (transacaoData.banco) {
+            let bancoSelecionado = bancos.find(item => Number(item.code) === transacaoData.banco.id)
             return bancoSelecionado;
         }
     }
@@ -116,7 +132,7 @@ const TransacaoGanhosDialog = (props: PropsTransacaoGanhosDialog) => {
                 <Dropdown
                     id="bancos"
                     value={handlerSelecionarBanco()}
-                    onChange={(e) => setTransacaoData({ ...transacaoData, banco: e.target.value.code })}
+                    onChange={(e) => setTransacaoData({ ...transacaoData, banco: { id: e.target.value.code } as Banco })}
                     options={bancos}
                     optionLabel="name"
                     placeholder="Selecione o Banco"

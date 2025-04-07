@@ -7,24 +7,43 @@ import { ColumnGroup } from "primereact/columngroup";
 import { Row } from "primereact/row";
 import { Button } from "primereact/button";
 import { useAppDispatch } from "../redux/hooks";
-import { removerGanhos } from "../pages/Home/homeSlice";
 import { ITransacao } from "../pages/Home/Mes/Features/Rateio";
+import { useSelector } from "react-redux";
+import { RootState } from "../redux/store";
+import { Transacao } from "../Domain/Transacao";
 
 declare interface IPropsDataTableGanhos {
-    transacoes: ITransacao[]
     titulo: string
 }
 
+declare interface DataTableTransacao {
+    id: number
+    descricao: string
+    data: string
+    valor: number
+    banco: string
+}
 const DataTableGanhos = (props: IPropsDataTableGanhos) => {
 
     const dispatch = useAppDispatch();
 
-    const [transacaoDialog, setTransacaoDialog] = useState<boolean>(false);
+    const transacaoGanhos: DataTableTransacao[] = useSelector((state: RootState) => state.mes.transacoes)
+        .filter((transacao) => transacao.receita)
+        .map(({ id, descricao, data, valor, banco }) => ({
+            id,
+            descricao,
+            data,
+            valor,
+            banco: banco.nome
+        } as DataTableTransacao));
 
+
+    const [transacaoDialog, setTransacaoDialog] = useState<boolean>(false);
+    console.log(transacaoGanhos)
     const [selectedTransacao, setSelectedTransacao] = useState<any>(null);
     const [selectedTransacoes, setSelectedTransacoes] = useState<any[]>([]);
 
-    const somaValor = (lista: ITransacao[]) => {
+    const somaValor = (lista: DataTableTransacao[]) => {
         let valorTotal: number = 0;
         lista.forEach(transacao => {
             if (transacao?.valor)
@@ -37,15 +56,15 @@ const DataTableGanhos = (props: IPropsDataTableGanhos) => {
         return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
     };
 
-    const footerGroupGanhos = () => {
-        return (<ColumnGroup>
+    const footerGroupGanhos = (
+        <ColumnGroup>
             <Row>
                 <Column footer="Total" colSpan={4} footerStyle={{ textAlign: 'left' }} />
-                <Column footer={formatCurrency(somaValor(props.transacoes))} colSpan={4} footerStyle={{ textAlign: 'left' }} />
+                <Column footer={formatCurrency(somaValor(transacaoGanhos))} colSpan={4} footerStyle={{ textAlign: 'left' }} />
             </Row>
         </ColumnGroup>
-        );
-    }
+    );
+
 
     const dataTemplate = (item: ITransacao) => {
         return new Date(item.data).toLocaleDateString("pt-BR", {
@@ -81,7 +100,7 @@ const DataTableGanhos = (props: IPropsDataTableGanhos) => {
 
     const deletarTransacoes = () => {
         let transacoesSelecionadas = selectedTransacoes.map(transacao => transacao.id)
-        dispatch(removerGanhos(transacoesSelecionadas))
+        //dispatch(removerGanhos(transacoesSelecionadas))
         setSelectedTransacoes([])
     }
 
@@ -94,7 +113,7 @@ const DataTableGanhos = (props: IPropsDataTableGanhos) => {
                 <div className="">
                     <Toolbar className="mb-4" start={leftToolbarTemplate}></Toolbar>
 
-                    <DataTable value={props.transacoes}
+                    <DataTable value={transacaoGanhos}
                         paginator
                         rows={10}
                         footerColumnGroup={footerGroupGanhos}

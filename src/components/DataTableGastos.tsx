@@ -5,15 +5,16 @@ import React, { useState } from "react";
 import { Button } from "primereact/button";
 import TransacaoGastosDialog from "./TransacaoGastosDialog";
 import { useAppDispatch } from "../redux/hooks";
-import { removerGastos } from "../pages/Home/homeSlice";
 import { InputText } from "primereact/inputtext";
 import { ColumnGroup } from "primereact/columngroup";
 import { Row } from "primereact/row";
 import { ITransacao, ITransacaoGastos } from "../pages/Home/Mes/Features/Rateio";
+import { Transacao } from "../Domain/Transacao";
+import { useSelector } from "react-redux";
+import { RootState } from "../redux/store";
 
 
 declare interface IPropsDataTableGanhos {
-    transacoes: ITransacaoGastos[]
     titulo: string
 }
 
@@ -21,12 +22,15 @@ const DataTableGastos: React.FC<IPropsDataTableGanhos> = (props) => {
 
     const dispatch = useAppDispatch();
 
+    const transacaoGastos: Transacao[] = useSelector((state: RootState) => state.mes.transacoes)
+        .filter((transacao) => !transacao.receita);
+
     const [transacaoDialog, setTransacaoDialog] = useState<boolean>(false);
 
-    const [selectedTransacao, setSelectedTransacao] = useState<ITransacaoGastos>({} as ITransacaoGastos);
-    const [selectedTransacoes, setSelectedTransacoes] = useState<ITransacaoGastos[]>([]);
+    const [selectedTransacao, setSelectedTransacao] = useState<Transacao>({} as Transacao);
+    const [selectedTransacoes, setSelectedTransacoes] = useState<Transacao[]>([]);
 
-    const somaValor = (lista: ITransacaoGastos[]) => {
+    const somaValor = (lista: Transacao[]) => {
         return lista.reduce((total, transacao) => total + (transacao.valor ?? 0), 0);
     }
 
@@ -38,7 +42,7 @@ const DataTableGastos: React.FC<IPropsDataTableGanhos> = (props) => {
         <ColumnGroup>
             <Row>
                 <Column footer="Total" colSpan={6} footerStyle={{ textAlign: 'left' }} />
-                <Column footer={formatCurrency(somaValor(props.transacoes))} colSpan={1} footerStyle={{ textAlign: 'left' }} />
+                <Column footer={formatCurrency(somaValor(transacaoGastos))} colSpan={1} footerStyle={{ textAlign: 'left' }} />
             </Row>
         </ColumnGroup>
     );
@@ -63,7 +67,7 @@ const DataTableGastos: React.FC<IPropsDataTableGanhos> = (props) => {
                     severity="success"
                     onClick={() => {
                         setTransacaoDialog(true);
-                        setSelectedTransacao({} as ITransacaoGastos)
+                        setSelectedTransacao({} as Transacao)
                     }} />
                 <Button label="Delete"
                     icon="pi pi-trash"
@@ -77,7 +81,7 @@ const DataTableGastos: React.FC<IPropsDataTableGanhos> = (props) => {
 
     const deletarTransacoes = () => {
         let transacoesSelecionadas = selectedTransacoes.map(transacao => transacao.id)
-        dispatch(removerGastos(transacoesSelecionadas))
+        //dispatch(removerGastos(transacoesSelecionadas))
         setSelectedTransacoes([])
     }
 
@@ -92,13 +96,13 @@ const DataTableGastos: React.FC<IPropsDataTableGanhos> = (props) => {
                 <div className="">
                     <Toolbar className="mb-4" start={leftToolbarTemplate}></Toolbar>
 
-                    <DataTable value={props.transacoes}
+                    <DataTable value={transacaoGastos}
                         selection={selectedTransacoes}
                         onSelectionChange={(e) => setSelectedTransacoes(e.value)}
                         selectionMode="checkbox"
                         onRowDoubleClick={(e) => {
                             setTransacaoDialog(true);
-                            setSelectedTransacao(e.data as ITransacaoGastos)
+                            setSelectedTransacao(e.data as Transacao)
                         }}
                         footerColumnGroup={footerGroupGanhos}>
 

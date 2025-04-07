@@ -11,7 +11,8 @@ import api from '../../../config/api';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../redux/store';
 import { Carteira } from '../../../Domain/Carteira';
-import { criarNovoMes } from '../Mes/mesSlice';
+import { criarNovoMes } from './carteiraSlice';
+import { fetchMesData } from '../Mes/mesSlice';
 
 const CarteiraDetail: React.FC = () => {
 
@@ -30,10 +31,9 @@ const CarteiraDetail: React.FC = () => {
                 label="Acessar"
                 severity="success"
                 icon="pi pi-check"
-                onClick={() => {
-                    navigate(`/mes/${mes.id}`, {
-                        state: { dados: mes }
-                    });
+                onClick={async () => {
+                    await dispatch(fetchMesData(mes.id));
+                    navigate(`/mes/${mes.id}`);
                 }} />
             <Button
                 icon="pi pi-trash"
@@ -51,7 +51,7 @@ const CarteiraDetail: React.FC = () => {
 
     const mesComponent = (mes: Mes) => {
         return (
-            <div className='col-3'>
+            <div key={mes.id} className='col-3'>
                 <Card title={mes.nome}
                     subTitle={mes.ano} footer={() => footer(mes)}>
                     <div className='flex align-items-center'>
@@ -93,7 +93,7 @@ const CarteiraDetail: React.FC = () => {
                 <div className='flex'>
 
                     <Button
-                        label="Voltar para Carteira"
+                        label="Voltar para Carteiras"
                         icon="pi pi-wallet"
                         onClick={() => navigate('/carteiras')}
                     />
