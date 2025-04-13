@@ -52,6 +52,19 @@ export const fetchBalanco = createAsyncThunk(
     }
 )
 
+export const removeTransacaoMes = createAsyncThunk(
+    'mes/removeTransacao',
+    async (transacaoId: number) => {
+        api.delete(`transacao/${transacaoId}`);
+    }
+)
+
+export const removeTransacoesMes = createAsyncThunk(
+    'mes/removeTransacoes',
+    async (transacoes: Transacao[]) => {
+        const promises = transacoes.map(transacao => api.delete(`transacao/${transacao.id}`));
+        Promise.all(promises);
+    });
 
 export const editarTransacaoMes = createAsyncThunk(
     'mes/editarTransacao',
