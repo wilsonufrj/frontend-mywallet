@@ -21,7 +21,7 @@ const Mes = () => {
 
     useEffect(() => {
         dispatch(fetchBalanco(mes.id ?? 0));
-    }, [])
+    }, [dispatch, mes.id])
 
     return (
         <div className="p-4">

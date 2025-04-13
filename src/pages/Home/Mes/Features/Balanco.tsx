@@ -4,19 +4,28 @@ import BarChart from "../../../../components/BarChart";
 import PieChart from "../../../../components/PieChart";
 import { ITransacaoGastos } from "./Rateio";
 import { Transacao } from "../../../../Domain/Transacao";
-import { BalancoData } from "../mesSlice";
+import { BalancoData, fetchBalanco } from "../mesSlice";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../redux/store";
+import { useEffect } from "react";
+import { useAppDispatch } from "../../../../redux/hooks";
 
 
 const Balanco = () => {
 
+    const dispatch = useAppDispatch();
+    const mesId: number | null = useSelector((state: RootState) => state.mes.id);
     const balanco: BalancoData = useSelector((state: RootState) => state.mes.balanco);
 
     const formatCurrency = (value: number) => {
         return value?.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
     };
 
+    useEffect(() => {
+        if (mesId) {
+            dispatch(fetchBalanco(mesId))
+        }
+    }, [dispatch, mesId]);
 
     return (
         <div className="card">

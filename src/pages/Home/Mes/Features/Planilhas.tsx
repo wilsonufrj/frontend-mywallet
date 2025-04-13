@@ -1,4 +1,3 @@
-import { useSelector } from "react-redux";
 import DataTableGanhos from "../../../../components/DataTableGanhos";
 import DataTableGastos from "../../../../components/DataTableGastos";
 import { Transacao } from "../../../../Domain/Transacao";

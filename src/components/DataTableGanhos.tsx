@@ -16,8 +16,8 @@ declare interface IPropsDataTableGanhos {
     titulo: string
 }
 
-declare interface DataTableTransacao {
-    id: number
+export declare interface DataTableTransacao {
+    id: number | null
     descricao: string
     data: string
     valor: number
@@ -28,7 +28,6 @@ const DataTableGanhos = (props: IPropsDataTableGanhos) => {
     const dispatch = useAppDispatch();
 
     const transacaoGanhos: DataTableTransacao[] = useSelector((state: RootState) => state.mes.transacoes)
-        .filter((transacao) => transacao.receita)
         .map(({ id, descricao, data, valor, banco }) => ({
             id,
             descricao,
@@ -39,7 +38,7 @@ const DataTableGanhos = (props: IPropsDataTableGanhos) => {
 
 
     const [transacaoDialog, setTransacaoDialog] = useState<boolean>(false);
-    console.log(transacaoGanhos)
+
     const [selectedTransacao, setSelectedTransacao] = useState<any>(null);
     const [selectedTransacoes, setSelectedTransacoes] = useState<any[]>([]);
 
@@ -114,6 +113,7 @@ const DataTableGanhos = (props: IPropsDataTableGanhos) => {
                     <Toolbar className="mb-4" start={leftToolbarTemplate}></Toolbar>
 
                     <DataTable value={transacaoGanhos}
+                        dataKey="id"
                         paginator
                         rows={10}
                         footerColumnGroup={footerGroupGanhos}

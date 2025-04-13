@@ -2,7 +2,6 @@ import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import api from '../../../config/api';
 import { Mes } from '../../../Domain/Mes';
 import { Transacao } from '../../../Domain/Transacao';
-import { RootState } from '../../../redux/store';
 
 export interface MesState {
     id: number | null
@@ -59,7 +58,7 @@ export const editarTransacaoMes = createAsyncThunk(
 
     async (transacao: Transacao) => {
         const response = await api.put<Transacao>(`transacao/${transacao.id}`, transacao)
-        return response.data
+        return { ...response.data } as Transacao;
     }
 )
 
@@ -107,10 +106,9 @@ const mesSlice = createSlice({
             })
         builder
             .addCase(editarTransacaoMes.fulfilled, (state, action: PayloadAction<Transacao>) => {
-                let indexTransacao = state.transacoes
-                    .findIndex((storeTransacao) => storeTransacao.id === action.payload.id)
-
-                state.transacoes[indexTransacao] = action.payload
+                state.transacoes = state.transacoes.map(transacao =>
+                    transacao.id === action.payload.id ? action.payload : transacao
+                );
             })
     }
 });

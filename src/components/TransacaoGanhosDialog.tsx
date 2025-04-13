@@ -16,10 +16,11 @@ import { Status } from "../Domain/Status";
 import { Responsavel } from "../Domain/Responsavel";
 import { TipoTransacao } from "../Domain/TipoTransacao";
 import { RootState } from "../redux/store";
-import { criaTransacaoMes } from "../pages/Home/Mes/mesSlice";
+import { criaTransacaoMes, editarTransacaoMes } from "../pages/Home/Mes/mesSlice";
+import { DataTableTransacao } from "./DataTableGanhos";
 
 declare interface PropsTransacaoGanhosDialog {
-    transacao: Transacao
+    transacao: DataTableTransacao
     dialogState: boolean
     setDialogState: Function
 }
@@ -36,7 +37,7 @@ const TransacaoGanhosDialog = (props: PropsTransacaoGanhosDialog) => {
     const idUsuario: number = useSelector((state: RootState) => state.auth.idUsuario);
     const mesId: (number | null) = useSelector((state: RootState) => state.mes.id);
 
-    const [transacaoData, setTransacaoData] = useState<Transacao>({} as Transacao);
+    const [transacaoData, setTransacaoData] = useState<DataTableTransacao>({} as DataTableTransacao);
     const [bancos, setBancos] = useState<IDropdown[]>([]);
 
     useEffect(() => {
@@ -50,7 +51,7 @@ const TransacaoGanhosDialog = (props: PropsTransacaoGanhosDialog) => {
                 }
             }))
             .then(data => setBancos(data));
-    }, [])
+    }, [props.transacao])
 
     const hideDialog = () => {
         props.setDialogState(false);
@@ -62,12 +63,12 @@ const TransacaoGanhosDialog = (props: PropsTransacaoGanhosDialog) => {
             <Button label="Save" icon="pi pi-check" onClick={() => {
 
                 let addTransacao = {
-                    id: null,
+                    id: transacaoData?.id,
                     data: transacaoData.data,
                     descricao: transacaoData.descricao,
                     valor: transacaoData.valor,
                     quantasVezes: 0,
-                    banco: transacaoData.banco,
+                    banco: { id: getBancoId(transacaoData.banco) } as Banco,
                     formaPagamento: { id: 1 } as FormaPagamento,
                     status: { id: 1 } as Status,
                     responsavel: { id: idUsuario } as Responsavel,
@@ -75,9 +76,13 @@ const TransacaoGanhosDialog = (props: PropsTransacaoGanhosDialog) => {
                     receita: true
                 } as Transacao
 
-                dispatch(criaTransacaoMes({ transacao: addTransacao, idMes: Number(mesId) }))
+                transacaoData.id
+                    ? dispatch(editarTransacaoMes(addTransacao))
+                    : dispatch(criaTransacaoMes({ transacao: addTransacao, idMes: Number(mesId) }))
 
-                setTransacaoData({} as Transacao);
+
+
+                setTransacaoData({} as DataTableTransacao);
                 props.setDialogState(false);
             }} />
         </React.Fragment>
@@ -85,9 +90,18 @@ const TransacaoGanhosDialog = (props: PropsTransacaoGanhosDialog) => {
 
     const handlerSelecionarBanco = () => {
         if (transacaoData.banco) {
-            let bancoSelecionado = bancos.find(item => Number(item.code) === transacaoData.banco.id)
+            let bancoSelecionado = bancos.find(item => item.name === transacaoData.banco);
             return bancoSelecionado;
         }
+    }
+
+    const getBancoId = (nomeBanco: string): number => {
+
+        let bancoSelecionado: IDropdown | undefined = bancos.find(item => item.name === nomeBanco);
+        if (bancoSelecionado) {
+            return Number(bancoSelecionado.code);
+        }
+        return -1;
     }
 
     return (
@@ -132,7 +146,7 @@ const TransacaoGanhosDialog = (props: PropsTransacaoGanhosDialog) => {
                 <Dropdown
                     id="bancos"
                     value={handlerSelecionarBanco()}
-                    onChange={(e) => setTransacaoData({ ...transacaoData, banco: { id: e.target.value.code } as Banco })}
+                    onChange={(e) => setTransacaoData({ ...transacaoData, banco: e.target.value.name })}
                     options={bancos}
                     optionLabel="name"
                     placeholder="Selecione o Banco"
