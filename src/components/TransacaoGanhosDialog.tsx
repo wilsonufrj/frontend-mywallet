@@ -18,6 +18,7 @@ import { TipoTransacao } from "../Domain/TipoTransacao";
 import { RootState } from "../redux/store";
 import { criaTransacaoMes, editarTransacaoMes } from "../pages/Home/Mes/mesSlice";
 import { DataTableTransacao } from "./DataTableGanhos";
+import { parseISO } from "date-fns";
 
 declare interface PropsTransacaoGanhosDialog {
     transacao: DataTableTransacao
@@ -64,7 +65,7 @@ const TransacaoGanhosDialog = (props: PropsTransacaoGanhosDialog) => {
 
                 let addTransacao = {
                     id: transacaoData?.id,
-                    data: transacaoData.data,
+                    data: transacaoData.data ?? parseISO(new Date().toISOString()),
                     descricao: transacaoData.descricao,
                     valor: transacaoData.valor,
                     quantasVezes: 0,
@@ -119,7 +120,7 @@ const TransacaoGanhosDialog = (props: PropsTransacaoGanhosDialog) => {
                 <label htmlFor="data" className="font-bold">
                     Data
                 </label>
-                <Calendar value={new Date(transacaoData.data)}
+                <Calendar value={transacaoData.data ? parseISO(transacaoData.data) : parseISO(new Date().toISOString())}
                     dateFormat="dd/mm/yy"
                     onChange={(e) => {
                         if (e.target.value) {

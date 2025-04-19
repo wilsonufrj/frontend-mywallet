@@ -11,6 +11,7 @@ import { ITransacao } from "../pages/Home/Mes/Features/Rateio";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 import { Transacao } from "../Domain/Transacao";
+import { parseISO } from "date-fns";
 
 declare interface IPropsDataTableGanhos {
     titulo: string
@@ -66,11 +67,7 @@ const DataTableGanhos = (props: IPropsDataTableGanhos) => {
 
 
     const dataTemplate = (item: ITransacao) => {
-        return new Date(item.data).toLocaleDateString("pt-BR", {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric"
-        });
+        return parseISO(item.data).toLocaleDateString('pt-BR');
     }
 
     const priceBodyTemplate = (item: any) => {
