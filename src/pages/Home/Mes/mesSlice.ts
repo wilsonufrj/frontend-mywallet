@@ -52,18 +52,12 @@ export const fetchBalanco = createAsyncThunk(
     }
 )
 
-export const removeTransacaoMes = createAsyncThunk(
-    'mes/removeTransacao',
-    async (transacaoId: number) => {
-        api.delete(`transacao/${transacaoId}`);
-    }
-)
 
 export const removeTransacoesMes = createAsyncThunk(
     'mes/removeTransacoes',
-    async (transacoes: Transacao[]) => {
-        const promises = transacoes.map(transacao => api.delete(`transacao/${transacao.id}`));
-        Promise.all(promises);
+    async (idTransacoes: number[]) => {
+        idTransacoes.forEach(id => api.delete(`transacao/${id}`));
+        return idTransacoes;
     });
 
 export const editarTransacaoMes = createAsyncThunk(
@@ -123,6 +117,13 @@ const mesSlice = createSlice({
                     transacao.id === action.payload.id ? action.payload : transacao
                 );
             })
+        builder
+            .addCase(removeTransacoesMes.fulfilled, (state, action: PayloadAction<number[]>) => {
+                state.transacoes = state.transacoes.filter(transacao => {
+                    return transacao.id && !action.payload.includes(transacao.id)
+                });
+            })
+
     }
 });
 

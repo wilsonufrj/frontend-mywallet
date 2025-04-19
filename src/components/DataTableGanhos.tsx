@@ -10,8 +10,8 @@ import { useAppDispatch } from "../redux/hooks";
 import { ITransacao } from "../pages/Home/Mes/Features/Rateio";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
-import { Transacao } from "../Domain/Transacao";
 import { parseISO } from "date-fns";
+import { removeTransacoesMes } from "../pages/Home/Mes/mesSlice";
 
 declare interface IPropsDataTableGanhos {
     titulo: string
@@ -96,7 +96,7 @@ const DataTableGanhos = (props: IPropsDataTableGanhos) => {
 
     const deletarTransacoes = () => {
         let transacoesSelecionadas = selectedTransacoes.map(transacao => transacao.id)
-        //dispatch(removerGanhos(transacoesSelecionadas))
+        dispatch(removeTransacoesMes(transacoesSelecionadas))
         setSelectedTransacoes([])
     }
 
