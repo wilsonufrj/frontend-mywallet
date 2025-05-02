@@ -27,7 +27,7 @@ declare interface IPropsTransacaoGanhosDialog {
 }
 
 export declare interface IDropdown {
-    code: number,
+    code: number | string,
     name: string
 }
 
@@ -111,7 +111,7 @@ const TransacaoGastosDialog = (props: IPropsTransacaoGanhosDialog) => {
                     quantasVezes: transacaoData.quantasVezes,
                     banco: transacaoData.banco,
                     formaPagamento: transacaoData.formaPagamento,
-                    status: status.value,
+                    status: transacaoData.status,
                     responsavel: transacaoData.responsavel ?? { id: usuario.idUsuario, nome: usuario.nome },
                     tipoTransacao: transacaoData.tipoTransacao,
                     receita: false

@@ -51,7 +51,7 @@ const Mes = () => {
                         <Planilhas />
                     </TabPanel>
                     <TabPanel header="Rateio" leftIcon="pi pi-percentage m-2">
-                        <Rateio gastos={[]} />
+                        <Rateio />
                     </TabPanel>
                 </TabView>
             </div>

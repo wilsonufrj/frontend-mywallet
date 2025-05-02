@@ -6,54 +6,55 @@ import { ColumnGroup } from "primereact/columngroup";
 import { Row } from "primereact/row";
 import { Tag } from "primereact/tag";
 import { useAppDispatch } from "../../../../redux/hooks";
+import api from "../../../../config/api";
+import { Responsavel } from "../../../../Domain/Responsavel";
+import { Banco } from "../../../../Domain/Banco";
+import { FormaPagamento } from "../../../../Domain/FormaPagamento";
+import { TipoTransacao } from "../../../../Domain/TipoTransacao";
+import { IDropdown } from "../../../../components/TransacaoGastosDialog";
+import { TipoStatus } from "../../../../enums/TipoStatus";
+import { Transacao } from "../../../../Domain/Transacao";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../../redux/store";
+import { editarTransacaoMes } from "../mesSlice";
 
-declare interface IPropsRateio {
-    gastos: ITransacaoGastos[]
-}
-export interface ITransacao {
-    id: number;
-    data: string;
-    descricao: string;
-    valor: number;
-    tipoGasto: string;
-    banco: string;
-    status: string;
-}
 
-export interface IDropdown {
-    name: string;
-    code: string;
-}
-
-export interface ITransacaoGastos extends ITransacao {
-    responsavel: string;
-}
-const Rateio: React.FC<IPropsRateio> = (props) => {
+const Rateio: React.FC = (props) => {
 
     const dispatch = useAppDispatch();
+    const transacoes: Transacao[] = useSelector((state: RootState) => state.mes.transacoes)
 
-    const [selectTransacoes, setSelectTransacoes] = useState<ITransacaoGastos[]>([])
-    const [transacaoData, setTransacaoData] = useState<ITransacaoGastos>({} as ITransacaoGastos);
+    const [responsaveis, setResponsaveis] = useState<IDropdown[]>([]);
+    const [transacoesFiltered, setTransacoesFiltered] = useState<Transacao[]>([])
+    const [responsavel, setResponsavel] = useState<Responsavel>({} as Responsavel);
 
     useEffect(() => {
-        let gastosPorResposavel = props.gastos.filter(item => item.responsavel === transacaoData.responsavel)
-        setSelectTransacoes(gastosPorResposavel);
-    }, [transacaoData, props.gastos])
 
-    const responsaveis: IDropdown[] = [
-        { name: 'Wilson', code: 'Wilson' },
-        { name: 'Gabrielle', code: 'Gabrielle' },
-        { name: 'Terezinha', code: 'Terezinha' },
-        { name: 'Jocimar', code: 'Jocimar' },
-        { name: 'Caio', code: 'Caio' },
+        api.get("responsaveis")
+            .then(response => response.data.map((item: any) => {
+                return {
+                    name: item.nome,
+                    code: item.id
+                }
+            }))
+            .then(data => setResponsaveis(data))
+
+    }, []);
+
+    useEffect(() => {
+        setTransacoesFiltered(
+            transacoes
+                .filter((transacao) => !transacao.receita)
+                .filter(transacao => transacao.responsavel.nome === responsavel.nome)
+        )
+    }, [responsavel, transacoes]);
+
+    const optionsAux: IDropdown[] = [
+        { name: 'Pago', code: TipoStatus.PAGO },
+        { name: 'Não Pago', code: TipoStatus.NAO_PAGO },
     ];
 
-    const status: IDropdown[] = [
-        { name: 'Pago', code: 'Pago' },
-        { name: 'Não Pago', code: 'Nao_Pago' }
-    ];
-
-    const dataTemplate = (item: ITransacao) => {
+    const dataTemplate = (item: Transacao) => {
         return new Date(item.data).toLocaleDateString("pt-BR", {
             day: "2-digit",
             month: "2-digit",
@@ -66,19 +67,22 @@ const Rateio: React.FC<IPropsRateio> = (props) => {
     };
 
     const handlerDropdown = (
-        transacao: any,
         lista: IDropdown[],
-        alvo: keyof typeof transacao
+        dado: Responsavel | Banco | FormaPagamento | TipoTransacao,
     ): IDropdown | undefined => {
-        if (transacao && alvo in transacao) {
-            return lista.find((item: IDropdown) => item.code === transacao[alvo]);
-        }
-        return undefined;
+        return lista.find(item => item.code === dado?.id);
     };
 
-    const somaValor = (lista: ITransacaoGastos[]) => {
+    const handlerDropdownStatus = (
+        lista: IDropdown[],
+        dado: string,
+    ): IDropdown | undefined => {
+        return lista.find(item => item.code === dado);
+    };
+
+    const somaValor = (lista: Transacao[]) => {
         return lista
-            .filter(item => item.status === 'Nao_Pago')
+            .filter(item => item.status === TipoStatus.NAO_PAGO)
             .reduce((total, transacao) => total + (transacao.valor ?? 0), 0);
     }
 
@@ -90,28 +94,28 @@ const Rateio: React.FC<IPropsRateio> = (props) => {
         <ColumnGroup>
             <Row>
                 <Column footer="Falta Pagar" colSpan={6} footerStyle={{ textAlign: 'left' }} />
-                <Column footer={formatCurrency(somaValor(selectTransacoes))} footerStyle={{ textAlign: 'left' }} />
+                <Column footer={formatCurrency(somaValor(transacoesFiltered))} footerStyle={{ textAlign: 'left' }} />
             </Row>
         </ColumnGroup>
     );
 
-    const statusTemplate = (item: ITransacaoGastos) => {
-        return item.status === "Pago"
+    const statusTemplate = (item: Transacao) => {
+        return item.status === TipoStatus.PAGO
             ? <Tag value="Pago" severity="success" />
             : <Tag value="Não Pago" severity="danger" />
     }
 
     const onCellEditComplete = (e: any) => {
         const { newValue, field, rowData } = e;
-        const updatedTransacao = { ...rowData, [field]: newValue.status || newValue };
-        //dispatch(adicionarEditarGastos(updatedTransacao));
+        const updatedTransacao = { ...rowData, [field]: newValue };
+        dispatch(editarTransacaoMes(updatedTransacao));
     };
 
     const cellEditor = (options: any) => {
         return (
             <Dropdown
-                options={status}
-                value={handlerDropdown(options.rowData, status, "status")}
+                options={optionsAux}
+                value={handlerDropdownStatus(optionsAux, options.rowData.status)}
                 optionLabel="name"
                 onChange={(e) => {
                     options.editorCallback(e.target.value.code);
@@ -131,8 +135,12 @@ const Rateio: React.FC<IPropsRateio> = (props) => {
                     </label>
                     <Dropdown
                         id="responsavel"
-                        value={handlerDropdown(transacaoData, responsaveis, "responsavel")}
-                        onChange={(e) => setTransacaoData({ ...transacaoData, responsavel: e.target.value.code })}
+                        value={handlerDropdown(responsaveis, responsavel)}
+                        onChange={(e) => setResponsavel({
+                            id: e.target.value.code,
+                            nome: e.target.value.name
+                        } as Responsavel
+                        )}
                         options={responsaveis}
                         optionLabel="name"
                         placeholder="Selecione o Responsável"
@@ -142,18 +150,20 @@ const Rateio: React.FC<IPropsRateio> = (props) => {
             </div>
 
             <div id="tabela">
-                <DataTable value={selectTransacoes}
+                <DataTable value={transacoesFiltered}
                     footerColumnGroup={footerGroupRateio}
                     editMode="cell">
 
 
                     <Column field="responsavel"
                         header="Responsável"
+                        body={(item: Transacao) => item.responsavel.nome}
                         style={{ maxWidth: '15rem' }}
                     />
 
                     <Column field="tipoGasto"
-                        header="Tipo Gasto" />
+                        header="Tipo Gasto"
+                        body={(item: Transacao) => item.tipoTransacao.nome} />
 
                     <Column field="data"
                         header="Data"
@@ -165,7 +175,8 @@ const Rateio: React.FC<IPropsRateio> = (props) => {
                         header="Descrição" />
 
                     <Column field="banco"
-                        header="Banco" />
+                        header="Banco"
+                        body={(item: Transacao) => item.banco.nome} />
 
                     <Column field="status"
                         header="Status"

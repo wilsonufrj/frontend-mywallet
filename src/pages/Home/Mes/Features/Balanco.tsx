@@ -2,8 +2,6 @@ import { Card } from "primereact/card";
 
 import BarChart from "../../../../components/BarChart";
 import PieChart from "../../../../components/PieChart";
-import { ITransacaoGastos } from "./Rateio";
-import { Transacao } from "../../../../Domain/Transacao";
 import { BalancoData, fetchBalanco } from "../mesSlice";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../redux/store";
@@ -29,14 +27,6 @@ const Balanco = () => {
 
     return (
         <div className="card">
-            <div className="flex mb-5">
-                <div className="w-6">
-                    <BarChart />
-                </div>
-                <div className="w-6 flex justify-content-center">
-                    <PieChart />
-                </div>
-            </div>
             <div className="flex justify-content-around">
                 <Card title="Ganhos do mês" className="ml-2">
                     <span className="flex align-items-center justify-content-center text-4xl font-bold">
@@ -64,6 +54,15 @@ const Balanco = () => {
                     </span>
                 </Card>
             </div>
+            <div className="flex mt-5">
+                <div className="w-6">
+                    <BarChart />
+                </div>
+                <div className="w-6 flex justify-content-center">
+                    <PieChart />
+                </div>
+            </div>
+
         </div>
     );
 }

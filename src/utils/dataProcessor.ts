@@ -1,6 +1,6 @@
 import { parseISO } from "date-fns";
-import { ITransacao } from "../pages/Home/Mes/Features/Rateio";
+import { Transacao } from "../Domain/Transacao";
 
-export const dataTemplate = (item: ITransacao) => {
+export const dataTemplate = (item: Transacao) => {
     return parseISO(item.data).toLocaleDateString('pt-BR');
 }
