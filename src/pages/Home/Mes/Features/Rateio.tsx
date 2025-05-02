@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
-import { IDropdown } from "../../../../components/TransacaoGastosDialog";
 import { Dropdown } from "primereact/dropdown";
 import { ColumnGroup } from "primereact/columngroup";
 import { Row } from "primereact/row";
@@ -19,6 +18,11 @@ export interface ITransacao {
     tipoGasto: string;
     banco: string;
     status: string;
+}
+
+export interface IDropdown {
+    name: string;
+    code: string;
 }
 
 export interface ITransacaoGastos extends ITransacao {

@@ -1,17 +1,16 @@
+import React, { useState } from "react";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
 import { Toolbar } from "primereact/toolbar";
-import React, { useState } from "react";
 import TransacaoGanhosDialog from "./TransacaoGanhosDialog";
 import { ColumnGroup } from "primereact/columngroup";
 import { Row } from "primereact/row";
 import { Button } from "primereact/button";
 import { useAppDispatch } from "../redux/hooks";
-import { ITransacao } from "../pages/Home/Mes/Features/Rateio";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
-import { parseISO } from "date-fns";
 import { removeTransacoesMes } from "../pages/Home/Mes/mesSlice";
+import { dataTemplate } from "../utils/dataProcessor";
 
 declare interface IPropsDataTableGanhos {
     titulo: string
@@ -29,6 +28,7 @@ const DataTableGanhos = (props: IPropsDataTableGanhos) => {
     const dispatch = useAppDispatch();
 
     const transacaoGanhos: DataTableTransacao[] = useSelector((state: RootState) => state.mes.transacoes)
+        .filter((transacao) => transacao.receita)
         .map(({ id, descricao, data, valor, banco }) => ({
             id,
             descricao,
@@ -65,10 +65,6 @@ const DataTableGanhos = (props: IPropsDataTableGanhos) => {
         </ColumnGroup>
     );
 
-
-    const dataTemplate = (item: ITransacao) => {
-        return parseISO(item.data).toLocaleDateString('pt-BR');
-    }
 
     const priceBodyTemplate = (item: any) => {
         return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(item.valor);
@@ -122,7 +118,7 @@ const DataTableGanhos = (props: IPropsDataTableGanhos) => {
                             setSelectedTransacao(e.data)
                         }}>
                         <Column selectionMode="multiple" exportable={false}></Column>
-                        <Column field="data" header="Data" body={dataTemplate}></Column>
+                        <Column field="data" header="Data" sortable body={dataTemplate}></Column>
                         <Column field="descricao" header="Descrição"></Column>
                         <Column field="banco" header="Banco" ></Column>
                         <Column field="valor" header="Valor" body={priceBodyTemplate}></Column>

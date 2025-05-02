@@ -12,13 +12,13 @@ import api from "../config/api";
 import { Transacao } from "../Domain/Transacao";
 import { Banco } from "../Domain/Banco";
 import { FormaPagamento } from "../Domain/FormaPagamento";
-import { Status } from "../Domain/Status";
 import { Responsavel } from "../Domain/Responsavel";
 import { TipoTransacao } from "../Domain/TipoTransacao";
 import { RootState } from "../redux/store";
 import { criaTransacaoMes, editarTransacaoMes } from "../pages/Home/Mes/mesSlice";
 import { DataTableTransacao } from "./DataTableGanhos";
 import { parseISO } from "date-fns";
+import { TipoStatus } from "../enums/TipoStatus";
 
 declare interface PropsTransacaoGanhosDialog {
     transacao: DataTableTransacao
@@ -71,7 +71,7 @@ const TransacaoGanhosDialog = (props: PropsTransacaoGanhosDialog) => {
                     quantasVezes: 0,
                     banco: { id: getBancoId(transacaoData.banco) } as Banco,
                     formaPagamento: { id: 1 } as FormaPagamento,
-                    status: { id: 1 } as Status,
+                    status: TipoStatus.PAGO,
                     responsavel: { id: idUsuario } as Responsavel,
                     tipoTransacao: { id: 1 } as TipoTransacao,
                     receita: true

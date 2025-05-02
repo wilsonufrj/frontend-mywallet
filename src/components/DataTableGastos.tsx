@@ -12,10 +12,22 @@ import { ITransacao, ITransacaoGastos } from "../pages/Home/Mes/Features/Rateio"
 import { Transacao } from "../Domain/Transacao";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
+import { dataTemplate } from "../utils/dataProcessor";
+import { removeTransacoesMes } from "../pages/Home/Mes/mesSlice";
 
 
 declare interface IPropsDataTableGanhos {
     titulo: string
+}
+
+export declare interface DataTableTransacaoGastos {
+    id: number | null
+    descricao: string
+    data: string
+    valor: number
+    banco: string,
+    responsavel: string,
+    tipoTransacao: string
 }
 
 const DataTableGastos: React.FC<IPropsDataTableGanhos> = (props) => {
@@ -28,7 +40,7 @@ const DataTableGastos: React.FC<IPropsDataTableGanhos> = (props) => {
     const [transacaoDialog, setTransacaoDialog] = useState<boolean>(false);
 
     const [selectedTransacao, setSelectedTransacao] = useState<Transacao>({} as Transacao);
-    const [selectedTransacoes, setSelectedTransacoes] = useState<Transacao[]>([]);
+    const [selectedTransacoes, setSelectedTransacoes] = useState<any[]>([]);
 
     const somaValor = (lista: Transacao[]) => {
         return lista.reduce((total, transacao) => total + (transacao.valor ?? 0), 0);
@@ -46,14 +58,6 @@ const DataTableGastos: React.FC<IPropsDataTableGanhos> = (props) => {
             </Row>
         </ColumnGroup>
     );
-
-    const dataTemplate = (item: ITransacao) => {
-        return new Date(item.data).toLocaleDateString("pt-BR", {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric"
-        });
-    }
 
     const priceBodyTemplate = (item: any) => {
         return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(item.valor);
@@ -81,7 +85,7 @@ const DataTableGastos: React.FC<IPropsDataTableGanhos> = (props) => {
 
     const deletarTransacoes = () => {
         let transacoesSelecionadas = selectedTransacoes.map(transacao => transacao.id)
-        //dispatch(removerGastos(transacoesSelecionadas))
+        dispatch(removeTransacoesMes(transacoesSelecionadas))
         setSelectedTransacoes([])
     }
 
@@ -97,6 +101,8 @@ const DataTableGastos: React.FC<IPropsDataTableGanhos> = (props) => {
                     <Toolbar className="mb-4" start={leftToolbarTemplate}></Toolbar>
 
                     <DataTable value={transacaoGastos}
+                        paginator
+                        rows={10}
                         selection={selectedTransacoes}
                         onSelectionChange={(e) => setSelectedTransacoes(e.value)}
                         selectionMode="checkbox"
@@ -111,11 +117,14 @@ const DataTableGastos: React.FC<IPropsDataTableGanhos> = (props) => {
 
                         <Column field="responsavel"
                             header="Responsável"
+                            body={(item: Transacao) => item.responsavel.nome}
                             style={{ maxWidth: '15rem' }}
                         />
 
                         <Column field="tipoGasto"
-                            header="Tipo Gasto" />
+                            header="Tipo Gasto"
+                            body={(item: Transacao) => item.tipoTransacao.nome}
+                        />
 
                         <Column field="data"
                             header="Data"
@@ -127,7 +136,9 @@ const DataTableGastos: React.FC<IPropsDataTableGanhos> = (props) => {
                             header="Descrição" />
 
                         <Column field="banco"
-                            header="Banco" />
+                            header="Banco"
+                            body={(item: Transacao) => item.banco.nome}
+                        />
 
                         <Column field="valor"
                             header="Valor"
