@@ -1,0 +1,15 @@
+html, body, #root {
+    margin: 0;
+    padding: 0;
+}
+
+.p-message .p-message-wrapper{
+    padding: 0.5rem;
+}
+
+#message-id{
+    font-size: 0.9rem;
+}
+.message *{
+    font-size: inherit;
+}
