@@ -49,7 +49,7 @@ const Login: React.FC = () => {
             {/* Imagem de fundo */}
             <div
                 style={{
-                    backgroundImage: `url('/background.png')`, // Coloque sua imagem em public/bg.jpg
+                    backgroundImage: `url('/background.jpg')`, // Coloque sua imagem em public/bg.jpg
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
                     backgroundRepeat: 'no-repeat',

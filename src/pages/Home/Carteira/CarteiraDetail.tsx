@@ -93,7 +93,7 @@ const CarteiraDetail: React.FC = () => {
             {/* Imagem de fundo */}
             <div
                 style={{
-                    backgroundImage: `url('/background.png')`, // Certifique-se de que o arquivo está em public/bg.jpg
+                    backgroundImage: `url('/background.jpg')`, // Certifique-se de que o arquivo está em public/bg.jpg
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
                     backgroundRepeat: 'no-repeat',
@@ -108,7 +108,7 @@ const CarteiraDetail: React.FC = () => {
             />
 
             {/* Conteúdo acima da imagem de fundo */}
-            <div style={{ position: 'relative', zIndex: 1 }} className="m-5">
+            <div style={{ position: 'relative', zIndex: 1 }} className="p-4">
                 <div className="mb-3">
                     <h1>{`Meses da Carteira: ${carteiraDetail.nome}`}</h1>
                     <div className="flex">

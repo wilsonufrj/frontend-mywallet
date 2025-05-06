@@ -27,7 +27,7 @@ const Mes = () => {
             {/* Imagem de fundo */}
             <div
                 style={{
-                    backgroundImage: `url('/background.png')`, // Coloque bg.jpg na pasta public/
+                    backgroundImage: `url('/background.jpg')`, // Coloque na pasta public/
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
                     backgroundRepeat: 'no-repeat',

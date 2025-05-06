@@ -103,7 +103,7 @@ const Carteiras: React.FC = () => {
             {/* Plano de fundo */}
             <div
                 style={{
-                    backgroundImage: `url('/background.png')`, // Certifique-se de que a imagem está em public/bg.jpg
+                    backgroundImage: `url('/background.jpg')`, // Certifique-se de que a imagem está em public/bg.jpg
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
                     backgroundRepeat: 'no-repeat',
@@ -118,7 +118,7 @@ const Carteiras: React.FC = () => {
             />
 
             {/* Conteúdo visível sobre o fundo */}
-            <div style={{ position: 'relative', zIndex: 1 }} className="m-5">
+            <div style={{ position: 'relative', zIndex: 1 }} className="p-4">
                 <div>
                     <h1>{`Carteiras Pessoais`}</h1>
                     <div className="flex mb-3">
