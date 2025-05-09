@@ -10,6 +10,7 @@ import { RootState } from "../../../redux/store";
 import { Carteira } from "../../../Domain/Carteira";
 import { useAppDispatch } from "../../../redux/hooks";
 import { fetchBalanco, MesState } from "./mesSlice";
+import { logout } from "../Login/authSlice";
 
 const Mes = () => {
     const dispatch = useAppDispatch();
@@ -58,7 +59,8 @@ const Mes = () => {
                             className="ml-2"
                             label="Logout"
                             icon="pi pi-sign-out"
-                            onClick={() => navigate('/')}
+                            onClick={() => dispatch(logout())}
+
                         />
                     </div>
 

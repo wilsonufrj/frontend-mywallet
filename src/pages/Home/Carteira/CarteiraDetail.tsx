@@ -13,6 +13,7 @@ import { RootState } from '../../../redux/store';
 import { Carteira } from '../../../Domain/Carteira';
 import { criarNovoMes } from './carteiraSlice';
 import { fetchMesData } from '../Mes/mesSlice';
+import { logout } from '../Login/authSlice';
 
 const CarteiraDetail: React.FC = () => {
     const dispatch = useAppDispatch();
@@ -121,7 +122,8 @@ const CarteiraDetail: React.FC = () => {
                             className="ml-2"
                             label="Logout"
                             icon="pi pi-sign-out"
-                            onClick={() => navigate('/')}
+                            onClick={() => dispatch(logout())}
+
                         />
                     </div>
                 </div>

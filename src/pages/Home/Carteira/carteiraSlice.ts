@@ -22,7 +22,7 @@ export const fetchCarteiras = createAsyncThunk(
     async (_, { getState }) => {
 
         const state = getState() as RootState;
-        const idUsuario: number = state.auth.idUsuario;
+        const idUsuario: number | undefined = state.auth.idUsuario;
 
         const response = await api.get(`carteira/usuario/${idUsuario}`);
         return response.data;
@@ -42,7 +42,7 @@ export const criarCarteira = createAsyncThunk(
     async (carteira: Carteira, { getState }) => {
 
         const state = getState() as RootState;
-        const idUsuario: number = state.auth.idUsuario;
+        const idUsuario: number | undefined = state.auth.idUsuario;
 
         const response = await api.post(`carteira/${idUsuario}`,
             carteira,
@@ -59,7 +59,7 @@ export const criarNovoMes = createAsyncThunk(
             const response = await api.post('mes', novoMes);
             return response.data;
         } catch (error: any) {
-            return rejectWithValue(error.response?.data || 'Erro ao criar novo mês');
+            return rejectWithValue(error.response?.data ?? 'Erro ao criar novo mês');
         }
     }
 );

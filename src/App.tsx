@@ -12,6 +12,7 @@ import Login from './pages/Home/Login/Login';
 import Carteiras from './pages/Home/Carteira/Carteiras';
 import CarteiraDetail from './pages/Home/Carteira/CarteiraDetail';
 import Mes from './pages/Home/Mes/Mes';
+import PrivateRoute from './routes/PrivateRoute';
 
 
 function App() {
@@ -20,9 +21,11 @@ function App() {
       <Router>
         <Routes>
           <Route path='/' element={<Login />} />
-          <Route path='/carteiras' element={<Carteiras />} />
-          <Route path='/carteira/:id' element={<CarteiraDetail />} />
-          <Route path='/mes/:id' element={<Mes />} />
+          <Route element={<PrivateRoute />}>
+            <Route path='/carteiras' element={<Carteiras />} />
+            <Route path='/carteira/:id' element={<CarteiraDetail />} />
+            <Route path='/mes/:id' element={<Mes />} />
+          </Route>
         </Routes>
       </Router>
     </Provider>
