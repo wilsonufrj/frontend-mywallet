@@ -14,11 +14,12 @@ import { Carteira } from '../../../Domain/Carteira';
 import { Usuario } from '../../../Domain/Usuario';
 import { useNavigate } from 'react-router-dom';
 import api from '../../../config/api';
+import { logout } from '../Login/authSlice';
 
 const Carteiras: React.FC = () => {
     const dispatch = useAppDispatch();
     const carteiras = useSelector((state: RootState) => state.carteira.carteiras);
-    const idUsuario: number = useSelector((state: RootState) => state.auth.idUsuario);
+    const idUsuario: number | undefined = useSelector((state: RootState) => state.auth.idUsuario);
 
     const [dialog, setDialog] = useState<boolean>(false);
     const [nomeCarteira, setNomeCarteira] = useState<string>('');
@@ -126,7 +127,7 @@ const Carteiras: React.FC = () => {
                             className="ml-2"
                             label="Logout"
                             icon="pi pi-sign-out"
-                            onClick={() => navigate('/')}
+                            onClick={() => dispatch(logout())}
                         />
                     </div>
                 </div>

@@ -35,7 +35,7 @@ const TransacaoGanhosDialog = (props: PropsTransacaoGanhosDialog) => {
 
     const dispatch = useAppDispatch();
 
-    const idUsuario: number = useSelector((state: RootState) => state.auth.idUsuario);
+    const idUsuario: number | undefined = useSelector((state: RootState) => state.auth.idUsuario);
     const mesId: (number | null) = useSelector((state: RootState) => state.mes.id);
 
     const [transacaoData, setTransacaoData] = useState<DataTableTransacao>({} as DataTableTransacao);

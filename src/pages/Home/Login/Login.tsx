@@ -5,7 +5,7 @@ import { FloatLabel } from 'primereact/floatlabel';
 import { InputText } from 'primereact/inputtext';
 import { Password } from 'primereact/password';
 import { useAppDispatch } from '../../../redux/hooks';
-import { AuthState, loginUser } from './authSlice';
+import { AuthState, login, LoginCredentials } from './authSlice';
 import { Navigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../redux/store';
@@ -24,7 +24,7 @@ const Login: React.FC = () => {
     const authState: AuthState = useSelector((state: RootState) => state.auth);
 
     useEffect(() => {
-        if (authState.error !== "") {
+        if (authState.error !== null) {
             msgs.current?.clear();
             msgs.current?.show([{ sticky: true, severity: 'error', summary: 'Error', detail: authState.error, closable: false }]);
         }
@@ -35,7 +35,11 @@ const Login: React.FC = () => {
     }
 
     const handleLogin = () => {
-        dispatch(loginUser({ nome: name, senha: password }));
+        let credentials: LoginCredentials = {
+            nome: name,
+            senha: password
+        };
+        dispatch(login(credentials));
     };
 
     const footer = () => {
