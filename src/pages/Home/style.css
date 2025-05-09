@@ -2,6 +2,7 @@
     margin: 0;
     padding: 0;
     border: 0;
+    height: 100%;
 }
 
 .title{
@@ -28,6 +29,7 @@ a{
     box-shadow: none !important; /* Remove qualquer sombra que possa parecer uma borda */
 }
 
+  
 
 
 
