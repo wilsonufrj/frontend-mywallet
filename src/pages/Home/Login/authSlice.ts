@@ -5,6 +5,7 @@ import {
 } from "@reduxjs/toolkit";
 import api from "../../../config/api";
 import { AxiosError } from "axios";
+import { Usuario } from "../../../Domain/Usuario";
 
 
 export interface AuthState {
@@ -40,6 +41,20 @@ const initialState: AuthState = {
     nome: null,
 };
 
+export const loginCadastro = createAsyncThunk(
+    'auth/login/cadastro',
+    async (usuario: Usuario, { rejectWithValue }) => {
+        try {
+            const response = await api.post("/auth/criar-usuario",
+                usuario
+            )
+            return response.data;
+        } catch (err) {
+            const error = err as AxiosError<ApiError>;
+            return rejectWithValue(error.response?.data.message ?? 'Falha no Login');
+        }
+    }
+);
 
 export const login = createAsyncThunk(
     'auth/login',
@@ -49,7 +64,7 @@ export const login = createAsyncThunk(
             return response.data;
         } catch (err) {
             const error = err as AxiosError<ApiError>;
-            return rejectWithValue(error.response?.data.message ?? 'Login failed');
+            return rejectWithValue(error.response?.data.message ?? 'Falha no Login');
         }
     }
 );
@@ -84,6 +99,15 @@ const authSlice = createSlice({
                 state.loading = false;
                 state.error = action.payload as string;
             });
+        builder
+            .addCase(loginCadastro.fulfilled, (state, action: PayloadAction<LoginResponse>) => {
+                state.token = action.payload.token;
+                state.idUsuario = action.payload.id;
+                state.nome = action.payload.nome;
+                state.isAuthenticated = true;
+                state.loading = false;
+                localStorage.setItem('token', action.payload.token);
+            })
     },
 });
 

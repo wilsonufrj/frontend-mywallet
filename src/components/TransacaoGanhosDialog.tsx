@@ -5,20 +5,23 @@ import { InputNumber } from "primereact/inputnumber";
 import { Button } from "primereact/button";
 import { Dropdown } from "primereact/dropdown";
 import { Calendar } from "primereact/calendar";
+import { IconField } from "primereact/iconfield";
+import { InputIcon } from "primereact/inputicon";
 
 import { useAppDispatch } from "../redux/hooks";
 import { useSelector } from "react-redux";
 import api from "../config/api";
 import { Transacao } from "../Domain/Transacao";
 import { Banco } from "../Domain/Banco";
-import { FormaPagamento } from "../Domain/FormaPagamento";
+import { FormaPagamento } from "../enums/FormaPagamento";
 import { Responsavel } from "../Domain/Responsavel";
-import { TipoTransacao } from "../Domain/TipoTransacao";
+import { TipoTransacao } from "../enums/TipoTransacao";
 import { RootState } from "../redux/store";
-import { criaTransacaoMes, editarTransacaoMes } from "../pages/Home/Mes/mesSlice";
+import { adicionaBanco, criaTransacaoMes, editarTransacaoMes } from "../pages/Home/Mes/mesSlice";
 import { DataTableTransacao } from "./DataTableGanhos";
 import { parseISO } from "date-fns";
 import { TipoStatus } from "../enums/TipoStatus";
+
 
 declare interface PropsTransacaoGanhosDialog {
     transacao: DataTableTransacao
@@ -70,10 +73,10 @@ const TransacaoGanhosDialog = (props: PropsTransacaoGanhosDialog) => {
                     valor: transacaoData.valor,
                     quantasVezes: 0,
                     banco: { id: getBancoId(transacaoData.banco) } as Banco,
-                    formaPagamento: { id: 1 } as FormaPagamento,
+                    formaPagamento: FormaPagamento.PIX,
                     status: TipoStatus.PAGO,
                     responsavel: { id: idUsuario } as Responsavel,
-                    tipoTransacao: { id: 1 } as TipoTransacao,
+                    tipoTransacao: TipoTransacao.DEBITO,
                     receita: true
                 } as Transacao
 

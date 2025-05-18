@@ -29,6 +29,9 @@ a{
     box-shadow: none !important; /* Remove qualquer sombra que possa parecer uma borda */
 }
 
+.tipoGastoIndividual{
+    width: 100% !important;
+}
   
 
 

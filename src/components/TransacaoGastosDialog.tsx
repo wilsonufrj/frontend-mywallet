@@ -13,12 +13,13 @@ import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 import { parseISO } from "date-fns";
 import { Banco } from "../Domain/Banco";
-import { FormaPagamento } from "../Domain/FormaPagamento";
+import { FormaPagamento } from "../enums/FormaPagamento";
 import { Responsavel } from "../Domain/Responsavel";
-import { TipoTransacao } from "../Domain/TipoTransacao";
+import { TipoTransacao } from "../enums/TipoTransacao";
 import { SelectButton } from "primereact/selectbutton";
 import { TipoStatus } from "../enums/TipoStatus";
 import { AuthState } from "../pages/Home/Login/authSlice";
+import { TipoCulpado } from "../enums/TipoCulpado";
 
 declare interface IPropsTransacaoGanhosDialog {
     transacao: Transacao
@@ -40,15 +41,36 @@ const TransacaoGastosDialog = (props: IPropsTransacaoGanhosDialog) => {
     const [transacaoData, setTransacaoData] = useState<Transacao>({ ...props.transacao });
     const [bancos, setBancos] = useState<IDropdown[]>([]);
     const [responsaveis, setResponsaveis] = useState<IDropdown[]>([]);
-    const [tipoTransacao, setTipoTransacao] = useState<IDropdown[]>([])
-    const [formaPagamento, setFormaPagamento] = useState<IDropdown[]>([])
+
+    const tipoTransacao = Object.values(TipoTransacao).map(
+        (item: any) => {
+            return {
+                name: item,
+                code: item
+            }
+        }
+    );
+
+
+    const formaPagamento = Object.values(FormaPagamento)
+        .map((item: any) => {
+            return {
+                name: item,
+                code: item
+            }
+        })
 
     const options = [
         { name: 'Pago', value: TipoStatus.PAGO },
         { name: 'Não Pago', value: TipoStatus.NAO_PAGO },
     ];
 
-    const [status, setStatus] = useState<any>(options[1]);
+    const optionsCulpado = [
+        { name: 'Sim, fui eu', value: TipoCulpado.SIM_FUI_EU },
+        { name: 'Não, não fui eu', value: TipoCulpado.NAO_FUI_EU }
+    ];
+
+    const [culpado, setCulpado] = useState<any>(optionsCulpado[0].value);
 
     useEffect(() => {
         setTransacaoData({ ...props.transacao })
@@ -62,34 +84,17 @@ const TransacaoGastosDialog = (props: IPropsTransacaoGanhosDialog) => {
             }))
             .then(data => setBancos(data));
 
-        api.get("responsaveis")
-            .then(response => response.data.map((item: any) => {
-                return {
-                    name: item.nome,
-                    code: item.id
-                }
-            }))
+        api.get(`responsaveis/usuario/${usuario.idUsuario}`)
+            .then(response => response.data
+                .filter((responsavel: Responsavel) => responsavel.id !== usuario.idUsuario)
+                .map((item: any) => {
+                    return {
+                        name: item.nome,
+                        code: item.id
+                    }
+                }))
             .then(data => setResponsaveis(data))
 
-        api.get("tipo-transacao")
-            .then(response => response.data.map((item: any) => {
-                return {
-                    name: item.nome,
-                    code: item.id
-                }
-            }))
-            .then(data => setTipoTransacao(data))
-
-
-        api.get("forma-pagamento")
-            .then(response => response.data.map((item: any) => {
-                return {
-                    name: item.nome,
-                    code: item.id
-                }
-            }
-            ))
-            .then(data => setFormaPagamento(data))
 
     }, [props.transacao])
 
@@ -102,6 +107,8 @@ const TransacaoGastosDialog = (props: IPropsTransacaoGanhosDialog) => {
         <React.Fragment>
             <Button label="Cancelar" icon="pi pi-times" outlined onClick={hideDialog} />
             <Button label="Salvar" icon="pi pi-check" onClick={() => {
+
+
 
                 let addTransacao = {
                     id: transacaoData?.id,
@@ -128,7 +135,7 @@ const TransacaoGastosDialog = (props: IPropsTransacaoGanhosDialog) => {
 
     const handlerDropdown = (
         lista: IDropdown[],
-        dado: Responsavel | Banco | FormaPagamento | TipoTransacao,
+        dado: Responsavel | Banco,
     ): IDropdown | undefined => {
         return lista.find(item => item.code === dado?.id);
     };
@@ -189,51 +196,76 @@ const TransacaoGastosDialog = (props: IPropsTransacaoGanhosDialog) => {
                     cols={20} />
             </div>
             <div className="field align-items-center">
-                <SelectButton value={transacaoData.status}
-                    onChange={(e) => setTransacaoData({ ...transacaoData, status: e.value })}
+                <label htmlFor="quem_culpado" className="font-bold">
+                    Foi você que gastou?
+                </label>
+                <SelectButton value={culpado}
+                    id="quem_culpado"
+                    onChange={(e) => setCulpado(e.value)}
                     optionLabel="name"
-                    options={options} />
+                    options={optionsCulpado} />
             </div>
-            <div className="formgrid grid">
-                <div className="field col-6">
-                    <label htmlFor="responsavel" className="font-bold">
-                        Responsável
-                    </label>
-                    <Dropdown
-                        id="responsavel"
-                        value={handlerDropdown(responsaveis, transacaoData.responsavel)}
-                        onChange={(e) => setTransacaoData({
-                            ...transacaoData, responsavel: {
-                                id: e.target.value.code,
-                                nome: e.target.value.name
-                            } as Responsavel
-                        })}
-                        options={responsaveis}
-                        optionLabel="name"
-                        placeholder="Selecione"
-                        className="w-full md:w-14rem" />
-                </div>
-                <div className="field col-6">
-                    <label htmlFor="tipoGasto" className="font-bold">
-                        Tipo
-                    </label>
-                    <Dropdown
-                        id="tipoGasto"
-                        value={handlerDropdown(tipoTransacao, transacaoData.tipoTransacao)}
-                        onChange={(e) => {
-                            setTransacaoData({
-                                ...transacaoData, tipoTransacao: {
-                                    id: e.target.value.code,
-                                    nome: e.target.name
-                                } as TipoTransacao
-                            })
-                        }}
-                        options={tipoTransacao}
-                        optionLabel="name"
-                        placeholder="Selecione"
-                        className="w-full md:w-14rem" />
-                </div>
-            </div>
+            {
+                culpado === TipoCulpado.NAO_FUI_EU
+                    ? <div className="formgrid grid">
+                        <div className="field col-6">
+                            <label htmlFor="responsavel" className="font-bold">
+                                Responsável
+                            </label>
+                            <Dropdown
+                                id="responsavel"
+                                value={handlerDropdown(responsaveis, transacaoData.responsavel)}
+                                onChange={(e) => setTransacaoData({
+                                    ...transacaoData, responsavel: {
+                                        id: e.target.value.code,
+                                        nome: e.target.value.name
+                                    } as Responsavel
+                                })}
+                                options={responsaveis}
+                                optionLabel="name"
+                                placeholder="Selecione"
+                            />
+                        </div>
+                        <div className="field col-6">
+                            <label htmlFor="tipoGasto" className="font-bold">
+                                Tipo
+                            </label>
+                            <Dropdown
+                                id="tipoGasto"
+                                value={transacaoData.tipoTransacao}
+                                onChange={(e) => {
+                                    setTransacaoData({
+                                        ...transacaoData, tipoTransacao: e.value,
+                                        status: TipoStatus.NAO_PAGO
+                                    })
+                                }}
+                                options={tipoTransacao}
+                                optionLabel="name"
+                                placeholder="Selecione"
+                                className="w-full md:w-14rem" />
+                        </div>
+                    </div>
+                    : <div className="formgrid grid">
+                        <div className="field col-12">
+                            <label htmlFor="tipoGastoIndividual" className="font-bold">
+                                Tipo
+                            </label>
+                            <Dropdown
+                                id="tipoGastoIndividual"
+                                value={transacaoData.tipoTransacao}
+                                onChange={(e) => {
+                                    setTransacaoData({
+                                        ...transacaoData, tipoTransacao: e.value
+                                    })
+                                }}
+                                options={tipoTransacao}
+                                optionLabel="name"
+                                placeholder="Selecione"
+                                className="tipoGastoIndividual" />
+                        </div>
+                    </div>
+            }
+
             <div className="formgrid grid">
                 <div className="field col-6">
                     <label htmlFor="bancos" className="font-bold">
@@ -259,12 +291,9 @@ const TransacaoGastosDialog = (props: IPropsTransacaoGanhosDialog) => {
                     </label>
                     <Dropdown
                         id="forma-pagamento"
-                        value={handlerDropdown(formaPagamento, transacaoData.formaPagamento)}
+                        value={transacaoData.formaPagamento}
                         onChange={(e) => setTransacaoData({
-                            ...transacaoData, formaPagamento: {
-                                id: e.target.value.code,
-                                descricao: e.target.value.name
-                            } as FormaPagamento
+                            ...transacaoData, formaPagamento: e.value
                         })}
                         options={formaPagamento}
                         optionLabel="name"

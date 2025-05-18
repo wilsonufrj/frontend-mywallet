@@ -2,6 +2,7 @@ import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import api from '../../../config/api';
 import { Mes } from '../../../Domain/Mes';
 import { Transacao } from '../../../Domain/Transacao';
+import { Banco } from '../../../Domain/Banco';
 
 export interface MesState {
     id: number | null
@@ -52,6 +53,17 @@ export const fetchBalanco = createAsyncThunk(
     }
 )
 
+export const adicionaBanco = createAsyncThunk(
+    'mes/banco/adicionaBanco',
+    async (banco: Banco, { rejectWithValue }) => {
+        try {
+            const response = await api.post("/banco", banco);
+            return response.data;
+        } catch (error: any) {
+            return rejectWithValue(error.response?.data || 'Erro ao buscar os dados do mês');
+        }
+    }
+)
 
 export const removeTransacoesMes = createAsyncThunk(
     'mes/removeTransacoes',

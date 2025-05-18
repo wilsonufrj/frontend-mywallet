@@ -121,7 +121,7 @@ const DataTableGastos: React.FC<IPropsDataTableGanhos> = (props) => {
 
                         <Column field="tipoGasto"
                             header="Tipo Gasto"
-                            body={(item: Transacao) => item.tipoTransacao.nome}
+                            body={(item: Transacao) => item.tipoTransacao}
                         />
 
                         <Column field="data"
@@ -152,7 +152,6 @@ const DataTableGastos: React.FC<IPropsDataTableGanhos> = (props) => {
                     />
                     : <></>
             }
-
 
         </div>)
 }

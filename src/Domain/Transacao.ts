@@ -1,8 +1,8 @@
 import { TipoStatus } from "../enums/TipoStatus";
 import { Banco } from "./Banco";
-import { FormaPagamento } from "./FormaPagamento";
+import { FormaPagamento } from "../enums/FormaPagamento";
 import { Responsavel } from "./Responsavel";
-import { TipoTransacao } from "./TipoTransacao";
+import { TipoTransacao } from "../enums/TipoTransacao";
 
 export interface Transacao {
     id: number | null;

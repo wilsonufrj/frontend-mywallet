@@ -20,6 +20,7 @@ const Carteiras: React.FC = () => {
     const dispatch = useAppDispatch();
     const carteiras = useSelector((state: RootState) => state.carteira.carteiras);
     const idUsuario: number | undefined = useSelector((state: RootState) => state.auth.idUsuario);
+    const nomeUsuario: string | null = useSelector((state: RootState) => state.auth.nome);
 
     const [dialog, setDialog] = useState<boolean>(false);
     const [nomeCarteira, setNomeCarteira] = useState<string>('');
@@ -84,6 +85,11 @@ const Carteiras: React.FC = () => {
         setUsuarios([]);
     };
 
+    const capitalizeFirstLetter = (str: string): string => {
+        if (!str) return str;
+        return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+    }
+
     const dialogFooter = (
         <React.Fragment>
             <Button label="Cancel" icon="pi pi-times" outlined onClick={hideDialog} />
@@ -121,6 +127,9 @@ const Carteiras: React.FC = () => {
             {/* Conteúdo visível sobre o fundo */}
             <div style={{ position: 'relative', zIndex: 1 }} className="p-4">
                 <div>
+                    <div className='flex justify-content-center'>
+                        <h1>Welcome {capitalizeFirstLetter(nomeUsuario ?? "")}!</h1>
+                    </div>
                     <h1>{`Carteiras Pessoais`}</h1>
                     <div className="flex mb-3">
                         <Button
@@ -129,29 +138,33 @@ const Carteiras: React.FC = () => {
                             icon="pi pi-sign-out"
                             onClick={() => dispatch(logout())}
                         />
+                        <Button
+                            icon="pi pi-plus"
+                            className="ml-2"
+                            label='Adicionar Carteira'
+                            onClick={async () => {
+                                setDialog(true);
+                                const response = await api.get('usuario');
+                                setUsuarios(
+                                    response.data
+                                        .filter((usuario: any) => usuario.id !== idUsuario)
+                                        .map((usuario: any) => ({
+                                            name: usuario.nome,
+                                            code: usuario.id,
+                                        }))
+                                );
+                            }}
+                        />
                     </div>
                 </div>
 
                 <div className="grid">
-                    {carteiras.map((carteira: any) => carteiraComponent(carteira))}
+                    {carteiras
+                        .filter(carteira => carteira.usuarios.length === 1)
+                        .map((carteira: any) => carteiraComponent(carteira))}
                     <div className="col-3 align-content-center">
                         <div className="flex justify-content-center">
-                            <Button
-                                icon="pi pi-plus"
-                                className="p-button-rounded p-button-secondary p-button-icon-only"
-                                onClick={async () => {
-                                    setDialog(true);
-                                    const response = await api.get('usuario');
-                                    setUsuarios(
-                                        response.data
-                                            .filter((usuario: any) => usuario.id !== idUsuario)
-                                            .map((usuario: any) => ({
-                                                name: usuario.nome,
-                                                code: usuario.id,
-                                            }))
-                                    );
-                                }}
-                            />
+
                         </div>
                     </div>
                 </div>
@@ -160,7 +173,11 @@ const Carteiras: React.FC = () => {
 
                 <div>
                     <h1>Carteiras Compartilhadas</h1>
-                    <div className="grid">{/* ... */}</div>
+                    <div className="grid">{
+                        carteiras
+                            .filter(carteira => carteira.usuarios.length > 1)
+                            .map((carteira: any) => carteiraComponent(carteira))
+                    }</div>
                 </div>
 
                 {dialog && (

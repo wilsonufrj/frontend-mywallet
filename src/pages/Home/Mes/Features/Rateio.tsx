@@ -9,8 +9,6 @@ import { useAppDispatch } from "../../../../redux/hooks";
 import api from "../../../../config/api";
 import { Responsavel } from "../../../../Domain/Responsavel";
 import { Banco } from "../../../../Domain/Banco";
-import { FormaPagamento } from "../../../../Domain/FormaPagamento";
-import { TipoTransacao } from "../../../../Domain/TipoTransacao";
 import { IDropdown } from "../../../../components/TransacaoGastosDialog";
 import { TipoStatus } from "../../../../enums/TipoStatus";
 import { Transacao } from "../../../../Domain/Transacao";
@@ -68,7 +66,7 @@ const Rateio: React.FC = (props) => {
 
     const handlerDropdown = (
         lista: IDropdown[],
-        dado: Responsavel | Banco | FormaPagamento | TipoTransacao,
+        dado: Responsavel | Banco
     ): IDropdown | undefined => {
         return lista.find(item => item.code === dado?.id);
     };
@@ -163,7 +161,7 @@ const Rateio: React.FC = (props) => {
 
                     <Column field="tipoGasto"
                         header="Tipo Gasto"
-                        body={(item: Transacao) => item.tipoTransacao.nome} />
+                        body={(item: Transacao) => item.tipoTransacao} />
 
                     <Column field="data"
                         header="Data"
