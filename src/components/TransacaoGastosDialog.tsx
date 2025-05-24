@@ -42,6 +42,8 @@ const TransacaoGastosDialog = (props: IPropsTransacaoGanhosDialog) => {
     const [bancos, setBancos] = useState<IDropdownGastos[]>([]);
     const [responsaveis, setResponsaveis] = useState<IDropdownGastos[]>([]);
 
+    const [culpado, setCulpado] = useState<any>(TipoCulpado.SIM_FUI_EU);
+
     const tipoTransacaoList: IDropdownGastos[] = Object.values(TipoTransacao).map(
         (item: any) => {
             return {
@@ -64,7 +66,6 @@ const TransacaoGastosDialog = (props: IPropsTransacaoGanhosDialog) => {
         { name: 'Não, não fui eu', value: TipoCulpado.NAO_FUI_EU }
     ];
 
-    const [culpado, setCulpado] = useState<any>(optionsCulpado[0].value);
 
     useEffect(() => {
         setTransacaoData({ ...props.transacao })
@@ -89,6 +90,10 @@ const TransacaoGastosDialog = (props: IPropsTransacaoGanhosDialog) => {
                 }))
             .then(data => setResponsaveis(data))
 
+        if (props.transacao.responsavel !== undefined
+            && !(props.transacao.responsavel.nome === usuario.nome)) {
+            setCulpado(TipoCulpado.NAO_FUI_EU);
+        }
 
     }, [props.transacao, usuario.idUsuario]);
 

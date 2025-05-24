@@ -15,12 +15,15 @@ import { Transacao } from "../../../../Domain/Transacao";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../redux/store";
 import { editarTransacaoMes } from "../mesSlice";
+import { AuthState } from "../../Login/authSlice";
 
 
 const Rateio: React.FC = (props) => {
 
     const dispatch = useAppDispatch();
-    const transacoes: Transacao[] = useSelector((state: RootState) => state.mes.transacoes)
+
+    const usuario: AuthState = useSelector((state: RootState) => state.auth);
+    const transacao: Transacao[] = useSelector((state: RootState) => state.mes.transacoes)
 
     const [responsaveis, setResponsaveis] = useState<IDropdownGastos[]>([]);
     const [transacoesFiltered, setTransacoesFiltered] = useState<Transacao[]>([])
@@ -28,24 +31,26 @@ const Rateio: React.FC = (props) => {
 
     useEffect(() => {
 
-        api.get("responsaveis")
-            .then(response => response.data.map((item: any) => {
-                return {
-                    name: item.nome,
-                    code: item.id
-                }
-            }))
+        api.get(`responsaveis/usuario/${usuario.idUsuario}`)
+            .then(response => response.data
+                .filter((responsavel: Responsavel) => responsavel.id !== usuario.idUsuario)
+                .map((item: any) => {
+                    return {
+                        name: item.nome,
+                        code: item.id
+                    }
+                }))
             .then(data => setResponsaveis(data))
 
     }, []);
 
     useEffect(() => {
         setTransacoesFiltered(
-            transacoes
+            transacao
                 .filter((transacao) => !transacao.receita)
                 .filter(transacao => transacao.responsavel.nome === responsavel.nome)
         )
-    }, [responsavel, transacoes]);
+    }, [responsavel, transacao]);
 
     const optionsAux: IDropdownGastos[] = [
         { name: 'Pago', code: TipoStatus.PAGO },

@@ -115,7 +115,8 @@ const TransacaoGanhosDialog = (props: PropsTransacaoGanhosDialog) => {
             modal
             className="p-fluid"
             footer={transactionDialogFooter}
-            onHide={hideDialog}>
+            onHide={hideDialog}
+            unstyled={false}>
 
             <div className="field">
                 <label htmlFor="data" className="font-bold">
