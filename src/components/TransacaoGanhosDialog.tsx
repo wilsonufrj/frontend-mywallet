@@ -5,8 +5,6 @@ import { InputNumber } from "primereact/inputnumber";
 import { Button } from "primereact/button";
 import { Dropdown } from "primereact/dropdown";
 import { Calendar } from "primereact/calendar";
-import { IconField } from "primereact/iconfield";
-import { InputIcon } from "primereact/inputicon";
 
 import { useAppDispatch } from "../redux/hooks";
 import { useSelector } from "react-redux";
@@ -17,7 +15,7 @@ import { FormaPagamento } from "../enums/FormaPagamento";
 import { Responsavel } from "../Domain/Responsavel";
 import { TipoTransacao } from "../enums/TipoTransacao";
 import { RootState } from "../redux/store";
-import { adicionaBanco, criaTransacaoMes, editarTransacaoMes } from "../pages/Home/Mes/mesSlice";
+import { criaTransacaoMes, editarTransacaoMes } from "../pages/Home/Mes/mesSlice";
 import { DataTableTransacao } from "./DataTableGanhos";
 import { parseISO } from "date-fns";
 import { TipoStatus } from "../enums/TipoStatus";
@@ -154,7 +152,8 @@ const TransacaoGanhosDialog = (props: PropsTransacaoGanhosDialog) => {
                     options={bancos}
                     optionLabel="name"
                     placeholder="Selecione o Banco"
-                    className="w-full md:w-14rem" />
+                    className="w-full"
+                />
             </div>
             <div className="formgrid grid">
                 <div className="field col-6">
