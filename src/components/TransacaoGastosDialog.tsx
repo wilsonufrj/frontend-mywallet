@@ -27,7 +27,7 @@ declare interface IPropsTransacaoGanhosDialog {
     setDialogState: Function
 }
 
-export declare interface IDropdown {
+export declare interface IDropdownGastos {
     code: number | string,
     name: string
 }
@@ -39,10 +39,10 @@ const TransacaoGastosDialog = (props: IPropsTransacaoGanhosDialog) => {
     const mesId: (number | null) = useSelector((state: RootState) => state.mes.id);
 
     const [transacaoData, setTransacaoData] = useState<Transacao>({ ...props.transacao });
-    const [bancos, setBancos] = useState<IDropdown[]>([]);
-    const [responsaveis, setResponsaveis] = useState<IDropdown[]>([]);
+    const [bancos, setBancos] = useState<IDropdownGastos[]>([]);
+    const [responsaveis, setResponsaveis] = useState<IDropdownGastos[]>([]);
 
-    const tipoTransacao = Object.values(TipoTransacao).map(
+    const tipoTransacaoList: IDropdownGastos[] = Object.values(TipoTransacao).map(
         (item: any) => {
             return {
                 name: item,
@@ -51,19 +51,13 @@ const TransacaoGastosDialog = (props: IPropsTransacaoGanhosDialog) => {
         }
     );
 
-
-    const formaPagamento = Object.values(FormaPagamento)
+    const formaPagamentoList: IDropdownGastos[] = Object.values(FormaPagamento)
         .map((item: any) => {
             return {
                 name: item,
                 code: item
-            }
+            } as IDropdownGastos
         })
-
-    const options = [
-        { name: 'Pago', value: TipoStatus.PAGO },
-        { name: 'Não Pago', value: TipoStatus.NAO_PAGO },
-    ];
 
     const optionsCulpado = [
         { name: 'Sim, fui eu', value: TipoCulpado.SIM_FUI_EU },
@@ -96,7 +90,7 @@ const TransacaoGastosDialog = (props: IPropsTransacaoGanhosDialog) => {
             .then(data => setResponsaveis(data))
 
 
-    }, [props.transacao])
+    }, [props.transacao, usuario.idUsuario]);
 
 
     const hideDialog = () => {
@@ -108,8 +102,6 @@ const TransacaoGastosDialog = (props: IPropsTransacaoGanhosDialog) => {
             <Button label="Cancelar" icon="pi pi-times" outlined onClick={hideDialog} />
             <Button label="Salvar" icon="pi pi-check" onClick={() => {
 
-
-
                 let addTransacao = {
                     id: transacaoData?.id,
                     data: transacaoData.data ?? parseISO(new Date().toISOString()),
@@ -118,7 +110,7 @@ const TransacaoGastosDialog = (props: IPropsTransacaoGanhosDialog) => {
                     quantasVezes: transacaoData.quantasVezes,
                     banco: transacaoData.banco,
                     formaPagamento: transacaoData.formaPagamento,
-                    status: transacaoData.status,
+                    status: TipoStatus.NAO_PAGO,
                     responsavel: transacaoData.responsavel ?? { id: usuario.idUsuario, nome: usuario.nome },
                     tipoTransacao: transacaoData.tipoTransacao,
                     receita: false
@@ -134,11 +126,19 @@ const TransacaoGastosDialog = (props: IPropsTransacaoGanhosDialog) => {
     );
 
     const handlerDropdown = (
-        lista: IDropdown[],
+        lista: IDropdownGastos[],
         dado: Responsavel | Banco,
-    ): IDropdown | undefined => {
+    ): IDropdownGastos | undefined => {
         return lista.find(item => item.code === dado?.id);
     };
+
+    const handlerDropdownFormaPagamento = (formaPagamento: FormaPagamento) => {
+        return formaPagamentoList.find(item => item.code === formaPagamento);
+    }
+
+    const handlerDropdownTipoTransacao = (formaPagamento: TipoTransacao) => {
+        return tipoTransacaoList.find(item => item.code === formaPagamento);
+    }
 
     return (
 
@@ -232,14 +232,14 @@ const TransacaoGastosDialog = (props: IPropsTransacaoGanhosDialog) => {
                             </label>
                             <Dropdown
                                 id="tipoGasto"
-                                value={transacaoData.tipoTransacao}
+                                value={handlerDropdownTipoTransacao(transacaoData.tipoTransacao)}
                                 onChange={(e) => {
                                     setTransacaoData({
-                                        ...transacaoData, tipoTransacao: e.value,
+                                        ...transacaoData, tipoTransacao: e.value.code,
                                         status: TipoStatus.NAO_PAGO
                                     })
                                 }}
-                                options={tipoTransacao}
+                                options={tipoTransacaoList}
                                 optionLabel="name"
                                 placeholder="Selecione"
                                 className="w-full md:w-14rem" />
@@ -252,13 +252,13 @@ const TransacaoGastosDialog = (props: IPropsTransacaoGanhosDialog) => {
                             </label>
                             <Dropdown
                                 id="tipoGastoIndividual"
-                                value={transacaoData.tipoTransacao}
+                                value={handlerDropdownTipoTransacao(transacaoData.tipoTransacao)}
                                 onChange={(e) => {
                                     setTransacaoData({
-                                        ...transacaoData, tipoTransacao: e.value
+                                        ...transacaoData, tipoTransacao: e.value.code
                                     })
                                 }}
-                                options={tipoTransacao}
+                                options={tipoTransacaoList}
                                 optionLabel="name"
                                 placeholder="Selecione"
                                 className="tipoGastoIndividual" />
@@ -291,11 +291,11 @@ const TransacaoGastosDialog = (props: IPropsTransacaoGanhosDialog) => {
                     </label>
                     <Dropdown
                         id="forma-pagamento"
-                        value={transacaoData.formaPagamento}
+                        value={handlerDropdownFormaPagamento(transacaoData.formaPagamento)}
                         onChange={(e) => setTransacaoData({
-                            ...transacaoData, formaPagamento: e.value
+                            ...transacaoData, formaPagamento: e.value.code
                         })}
-                        options={formaPagamento}
+                        options={formaPagamentoList}
                         optionLabel="name"
                         placeholder="Selecione"
                         className="w-full md:w-14rem" />

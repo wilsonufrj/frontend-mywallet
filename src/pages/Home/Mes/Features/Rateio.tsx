@@ -9,7 +9,7 @@ import { useAppDispatch } from "../../../../redux/hooks";
 import api from "../../../../config/api";
 import { Responsavel } from "../../../../Domain/Responsavel";
 import { Banco } from "../../../../Domain/Banco";
-import { IDropdown } from "../../../../components/TransacaoGastosDialog";
+import { IDropdownGastos } from "../../../../components/TransacaoGastosDialog";
 import { TipoStatus } from "../../../../enums/TipoStatus";
 import { Transacao } from "../../../../Domain/Transacao";
 import { useSelector } from "react-redux";
@@ -22,7 +22,7 @@ const Rateio: React.FC = (props) => {
     const dispatch = useAppDispatch();
     const transacoes: Transacao[] = useSelector((state: RootState) => state.mes.transacoes)
 
-    const [responsaveis, setResponsaveis] = useState<IDropdown[]>([]);
+    const [responsaveis, setResponsaveis] = useState<IDropdownGastos[]>([]);
     const [transacoesFiltered, setTransacoesFiltered] = useState<Transacao[]>([])
     const [responsavel, setResponsavel] = useState<Responsavel>({} as Responsavel);
 
@@ -47,7 +47,7 @@ const Rateio: React.FC = (props) => {
         )
     }, [responsavel, transacoes]);
 
-    const optionsAux: IDropdown[] = [
+    const optionsAux: IDropdownGastos[] = [
         { name: 'Pago', code: TipoStatus.PAGO },
         { name: 'Não Pago', code: TipoStatus.NAO_PAGO },
     ];
@@ -65,16 +65,16 @@ const Rateio: React.FC = (props) => {
     };
 
     const handlerDropdown = (
-        lista: IDropdown[],
+        lista: IDropdownGastos[],
         dado: Responsavel | Banco
-    ): IDropdown | undefined => {
+    ): IDropdownGastos | undefined => {
         return lista.find(item => item.code === dado?.id);
     };
 
     const handlerDropdownStatus = (
-        lista: IDropdown[],
+        lista: IDropdownGastos[],
         dado: string,
-    ): IDropdown | undefined => {
+    ): IDropdownGastos | undefined => {
         return lista.find(item => item.code === dado);
     };
 
