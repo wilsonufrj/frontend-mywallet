@@ -33,7 +33,9 @@ const CarteiraDetail: React.FC = () => {
                     icon="pi pi-check"
                     onClick={async () => {
                         await dispatch(fetchMesData(mes.id));
-                        navigate(`/mes/${mes.id}`);
+                        carteiraDetail.usuarios.length > 1
+                            ? navigate(`/mes-conjunto/${mes.id}`)
+                            : navigate(`/mes/${mes.id}`)
                     }}
                 />
                 <Button

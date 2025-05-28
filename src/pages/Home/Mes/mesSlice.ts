@@ -135,7 +135,6 @@ const mesSlice = createSlice({
                     return transacao.id && !action.payload.includes(transacao.id)
                 });
             })
-
     }
 });
 

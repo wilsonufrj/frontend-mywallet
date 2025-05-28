@@ -13,6 +13,7 @@ import Carteiras from './pages/Home/Carteira/Carteiras';
 import CarteiraDetail from './pages/Home/Carteira/CarteiraDetail';
 import Mes from './pages/Home/Mes/Mes';
 import PrivateRoute from './routes/PrivateRoute';
+import MesConjunto from './pages/Home/Mes/MesConjunto';
 
 
 function App() {
@@ -25,6 +26,7 @@ function App() {
             <Route path='/carteiras' element={<Carteiras />} />
             <Route path='/carteira/:id' element={<CarteiraDetail />} />
             <Route path='/mes/:id' element={<Mes />} />
+            <Route path='/mes-conjunto/:id' element={<MesConjunto />} />
           </Route>
         </Routes>
       </Router>

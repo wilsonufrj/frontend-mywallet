@@ -16,6 +16,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../../../redux/store";
 import { editarTransacaoMes } from "../mesSlice";
 import { AuthState } from "../../Login/authSlice";
+import { TipoTransacao } from "../../../../enums/TipoTransacao";
 
 
 const Rateio: React.FC = (props) => {
@@ -33,7 +34,6 @@ const Rateio: React.FC = (props) => {
 
         api.get(`responsaveis/usuario/${usuario.idUsuario}`)
             .then(response => response.data
-                .filter((responsavel: Responsavel) => responsavel.id !== usuario.idUsuario)
                 .map((item: any) => {
                     return {
                         name: item.nome,
@@ -48,6 +48,7 @@ const Rateio: React.FC = (props) => {
         setTransacoesFiltered(
             transacao
                 .filter((transacao) => !transacao.receita)
+                .filter(transacao => transacao.tipoTransacao === TipoTransacao.CREDITO)
                 .filter(transacao => transacao.responsavel.nome === responsavel.nome)
         )
     }, [responsavel, transacao]);
