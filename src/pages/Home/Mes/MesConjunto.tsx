@@ -28,6 +28,10 @@ import { Banco } from '../../../Domain/Banco';
 import { TipoStatus } from '../../../enums/TipoStatus';
 import { FormaPagamento } from '../../../enums/FormaPagamento';
 import { TipoTransacao } from '../../../enums/TipoTransacao';
+import { Slider, SliderChangeEvent } from 'primereact/slider';
+import { FloatLabel } from 'primereact/floatlabel';
+import { Knob } from 'primereact/knob';
+import { Message } from 'primereact/message';
 
 declare interface IDropdown {
     code: string,
@@ -43,7 +47,7 @@ function MesConjunto() {
     const [bancos, setBancos] = useState<IDropdown[]>([]);
     const [transacoesPorUsuario, setTransacoesPorUsuario] = useState<{ [usuarioId: string]: Transacao[] }>({});
     const [gastos, setGastos] = useState<Transacao[]>([]);
-
+    const [percentageInvestment, setPercentageInvestment] = useState<number>(0);
     const navigate = useNavigate();
 
     const stepperRef = useRef<any>(null);
@@ -408,8 +412,22 @@ function MesConjunto() {
                                     </div>
                                 </StepperPanel>
                                 <StepperPanel header="Porcentagem de Investimento Conjunto">
-                                    <div className="flex flex-column h-12rem">
-                                        <div className="border-2 border-dashed surface-border border-round surface-ground flex-auto flex justify-content-center align-items-center font-medium">Cadastrar a porcentagem de investimento</div>
+                                    <div className="">
+                                        <div className="flex justify-content-center align-items-center font-medium">
+                                            <div className='flex align-items-center flex-column'>
+                                                <label htmlFor="pnum">Porcentagem de investimento</label>
+                                                <Knob value={percentageInvestment} onChange={(e) => setPercentageInvestment(e.value)} valueTemplate={'{value}%'} />
+                                                {
+                                                    percentageInvestment > 30
+                                                        ? <Message
+                                                            severity="warn"
+                                                            text="Mais que 30% de investimento pode comprometer a saúde financeira do mês." />
+                                                        : <></>
+                                                }
+                                            </div>
+
+                                        </div>
+
                                     </div>
                                     <div className="flex pt-4 justify-content-start">
                                         <Button label="Back" severity="secondary" icon="pi pi-arrow-left" onClick={() => stepperRef.current.prevCallback()} />
