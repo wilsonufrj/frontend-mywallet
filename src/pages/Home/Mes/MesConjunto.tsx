@@ -4,18 +4,15 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../../redux/store';
 import { Carteira } from '../../../Domain/Carteira';
 import { useNavigate } from 'react-router-dom';
-import { atualizaPorcentagemInvestimento, MesState, salvaPorcentagemInvestimento } from './mesSlice';
+import { MesState } from './mesSlice';
 import { Button } from 'primereact/button';
 import { TabPanel, TabView } from 'primereact/tabview';
-import { Stepper } from 'primereact/stepper';
-import { StepperPanel } from 'primereact/stepperpanel';
 
 import Balanco from './Features/Balanco';
 import { logout } from '../Login/authSlice';
 import api from '../../../config/api';
-import GanhoConjunto from './Features/GanhoConjunto';
-import GastoConjunto from './Features/GastoConjunto';
-import InvestimentoConjunto from './Features/InvestimentoConjunto';
+import PlanilhaConjunto from './Features/PlanilhaConjunto';
+import BalancoConjunto from './Features/BalancoConjunto';
 
 export declare interface IDropdown {
     code: string,
@@ -28,31 +25,9 @@ function MesConjunto() {
 
     const carteira: Carteira = useSelector((state: RootState) => state.carteira.carteiraSelected);
     const mes: MesState = useSelector((state: RootState) => state.mes);
-    const [bancos, setBancos] = useState<IDropdown[]>([]);
 
-
-    const [responsaveis, setResponsaveis] = useState<any[]>([]);
     const navigate = useNavigate();
 
-    const stepperRef = useRef<any>(null);
-
-
-    useEffect(() => {
-        api.get("banco")
-            .then(response => response.data.map((item: any) => {
-                return {
-                    name: item.nome,
-                    code: item.id
-                }
-            }))
-            .then(data => setBancos(data));
-
-        api.get("responsaveis")
-            .then(response => {
-                setResponsaveis(response.data);
-            });
-
-    }, [])
 
     return (
         <div style={{ position: 'relative', minHeight: '100vh' }}>
@@ -98,40 +73,10 @@ function MesConjunto() {
 
                     <TabView>
                         <TabPanel header="Balanço" leftIcon="pi pi-calculator m-2">
-                            <Balanco />
+                            <BalancoConjunto />
                         </TabPanel>
                         <TabPanel header="Configuração Mes" leftIcon="pi pi-cog m-2">
-                            <Stepper ref={stepperRef}>
-                                <StepperPanel header="Ganhos Conjuntos">
-                                    <GanhoConjunto bancos={bancos} responsaveis={responsaveis} />
-                                    <div className="flex pt-4 justify-content-end">
-                                        <Button label="Próximo" icon="pi pi-arrow-right" iconPos="right" onClick={() => {
-                                            stepperRef.current && stepperRef.current.nextCallback()
-                                        }} />
-                                    </div>
-                                </StepperPanel>
-                                <StepperPanel header="Gastos Conjuntos">
-                                    <GastoConjunto bancos={bancos} responsaveis={responsaveis} />
-                                    <div className="flex pt-4 justify-content-between">
-                                        <Button label="Back" severity="secondary" icon="pi pi-arrow-left" onClick={() => stepperRef.current && stepperRef.current.prevCallback()} />
-                                        <Button label="Próximo" icon="pi pi-arrow-right" iconPos="right" onClick={() => {
-                                            stepperRef.current && stepperRef.current.nextCallback()
-                                        }} />
-                                    </div>
-                                </StepperPanel>
-                                <StepperPanel header="Porcentagem de Investimento Conjunto">
-                                    <InvestimentoConjunto mes={mes} />
-                                    <div className="flex pt-4 justify-content-between">
-                                        <Button label="Back" severity="secondary" icon="pi pi-arrow-left" onClick={() => stepperRef.current.prevCallback()} />
-                                        <Button label='Salvar'
-                                            className='ml-3 justify-content-end'
-                                            icon="pi pi-save"
-                                            iconPos="right" onClick={() => {
-                                                dispatch(salvaPorcentagemInvestimento(Number(mes.id)));
-                                            }} />
-                                    </div>
-                                </StepperPanel>
-                            </Stepper>
+                            <PlanilhaConjunto />
                         </TabPanel>
                     </TabView>
                 </div>

@@ -4,6 +4,7 @@ import { Mes } from '../../../Domain/Mes';
 import { Transacao } from '../../../Domain/Transacao';
 import { Banco } from '../../../Domain/Banco';
 import { RootState } from '../../../redux/store';
+import { Responsavel } from '../../../Domain/Responsavel';
 
 export interface MesState {
     id: number | null
@@ -11,6 +12,7 @@ export interface MesState {
     ano: number
     transacoes: Transacao[]
     balanco: BalancoData,
+    balancoConjunto: BalancoConjuntoData[],
     porcentagemInvestimento: number
 }
 
@@ -23,12 +25,22 @@ export interface BalancoData {
     saldoMesSeguinte: number;
 }
 
+export interface BalancoConjuntoData {
+    responsavelDTO: Responsavel;
+    porcentagemDosCustos: number;
+    gastosConjunto: number;
+    investimentoConjunto: number;
+    totalGasto: number;
+    saldoFinal: number;
+}
+
 const initialState: MesState = {
     id: null,
     nome: '',
     ano: new Date().getFullYear(),
     transacoes: [],
     balanco: {} as BalancoData,
+    balancoConjunto: [] as BalancoConjuntoData[],
     porcentagemInvestimento: 0
 };
 
@@ -49,6 +61,18 @@ export const fetchBalanco = createAsyncThunk(
     async (mesId: number, { rejectWithValue }) => {
         try {
             const response = await api.get<BalancoData>(`mes/balanco/${mesId}`);
+            return response.data;
+        } catch (error: any) {
+            return rejectWithValue(error.response?.data || 'Erro ao buscar os dados do mês');
+        }
+    }
+)
+
+export const fetchBalancoConjunto = createAsyncThunk(
+    'mes/fetchBalancoConjunto',
+    async (mesId: number, { rejectWithValue }) => {
+        try {
+            const response = await api.get<BalancoConjuntoData[]>(`mes/balanco-conjunto/${mesId}`);
             return response.data;
         } catch (error: any) {
             return rejectWithValue(error.response?.data || 'Erro ao buscar os dados do mês');
@@ -129,6 +153,7 @@ const mesSlice = createSlice({
                 state.id = action.payload.id;
                 state.nome = action.payload.nome;
                 state.ano = action.payload.ano;
+                state.porcentagemInvestimento = action.payload.porcentagemInvestimento || 0;
                 state.transacoes = action.payload.transacoes
                     .slice()
                     .sort((a, b) => new Date(a.data).getTime() - new Date(b.data).getTime());;
@@ -159,6 +184,13 @@ const mesSlice = createSlice({
                     return transacao.id && !action.payload.includes(transacao.id)
                 });
             });
+        builder
+            .addCase(fetchBalancoConjunto.fulfilled, (state, action: PayloadAction<BalancoConjuntoData[]>) => {
+                state.balancoConjunto = action.payload.sort((a, b) =>
+                    a.responsavelDTO.nome.localeCompare(b.responsavelDTO.nome)
+                );
+            }
+            )
     }
 });
 

@@ -7,4 +7,5 @@ export interface Mes {
     ano: number;
     carteira: Carteira
     transacoes: Transacao[];
+    porcentagemInvestimento: number;
 }

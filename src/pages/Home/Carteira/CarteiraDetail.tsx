@@ -73,6 +73,7 @@ const CarteiraDetail: React.FC = () => {
             nome: nomeMes,
             ano: currentYear,
             carteira: { id: carteiraDetail.id } as Carteira,
+            porcentagemInvestimento: 0,
             transacoes: [],
         };
     };

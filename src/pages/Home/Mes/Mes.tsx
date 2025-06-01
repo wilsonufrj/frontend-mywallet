@@ -9,7 +9,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../../redux/store";
 import { Carteira } from "../../../Domain/Carteira";
 import { useAppDispatch } from "../../../redux/hooks";
-import { fetchBalanco, MesState } from "./mesSlice";
+import { MesState } from "./mesSlice";
 import { logout } from "../Login/authSlice";
 
 const Mes = () => {
@@ -18,10 +18,6 @@ const Mes = () => {
     const carteira: Carteira = useSelector((state: RootState) => state.carteira.carteiraSelected);
     const mes: MesState = useSelector((state: RootState) => state.mes);
     const navigate = useNavigate();
-
-    // useEffect(() => {
-    //     dispatch(fetchBalanco(mes.id ?? 0));
-    // }, [dispatch, mes.id]);
 
     return (
         <div style={{ position: 'relative', minHeight: '100vh' }}>

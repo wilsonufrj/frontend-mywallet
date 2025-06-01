@@ -7,6 +7,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../../../redux/store";
 import { useEffect } from "react";
 import { useAppDispatch } from "../../../../redux/hooks";
+import { formatCurrency } from "../../../../utils/numberProcessor";
 
 
 const Balanco = () => {
@@ -14,10 +15,6 @@ const Balanco = () => {
     const dispatch = useAppDispatch();
     const mesId: number | null = useSelector((state: RootState) => state.mes.id);
     const balanco: BalancoData = useSelector((state: RootState) => state.mes.balanco);
-
-    const formatCurrency = (value: number) => {
-        return value?.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-    };
 
     useEffect(() => {
         if (mesId) {
