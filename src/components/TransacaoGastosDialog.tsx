@@ -180,14 +180,14 @@ const TransacaoGastosDialog = (props: IPropsTransacaoGanhosDialog) => {
                         currency="BRL"
                         locale="pt-BR" />
                 </div>
-                <div className="field col-6">
+                {/* <div className="field col-6">
                     <label htmlFor="parcelas" className="font-bold mb-2">Parcelas</label>
                     <InputNumber inputId="parcelas"
                         value={transacaoData.quantasVezes}
                         onValueChange={(e: InputNumberValueChangeEvent) => setTransacaoData({ ...transacaoData, quantasVezes: Number(e.value) })}
                         showButtons min={0} />
 
-                </div>
+                </div> */}
             </div>
             <div className="field">
                 <label htmlFor="description" className="font-bold">
