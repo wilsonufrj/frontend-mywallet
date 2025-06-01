@@ -19,9 +19,9 @@ const Mes = () => {
     const mes: MesState = useSelector((state: RootState) => state.mes);
     const navigate = useNavigate();
 
-    useEffect(() => {
-        dispatch(fetchBalanco(mes.id ?? 0));
-    }, [dispatch, mes.id]);
+    // useEffect(() => {
+    //     dispatch(fetchBalanco(mes.id ?? 0));
+    // }, [dispatch, mes.id]);
 
     return (
         <div style={{ position: 'relative', minHeight: '100vh' }}>

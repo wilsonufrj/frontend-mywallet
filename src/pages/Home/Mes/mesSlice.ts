@@ -3,13 +3,15 @@ import api from '../../../config/api';
 import { Mes } from '../../../Domain/Mes';
 import { Transacao } from '../../../Domain/Transacao';
 import { Banco } from '../../../Domain/Banco';
+import { RootState } from '../../../redux/store';
 
 export interface MesState {
     id: number | null
     nome: string
     ano: number
     transacoes: Transacao[]
-    balanco: BalancoData
+    balanco: BalancoData,
+    porcentagemInvestimento: number
 }
 
 export interface BalancoData {
@@ -26,7 +28,8 @@ const initialState: MesState = {
     nome: '',
     ano: new Date().getFullYear(),
     transacoes: [],
-    balanco: {} as BalancoData
+    balanco: {} as BalancoData,
+    porcentagemInvestimento: 0
 };
 
 export const fetchMesData = createAsyncThunk(
@@ -74,7 +77,6 @@ export const removeTransacoesMes = createAsyncThunk(
 
 export const editarTransacaoMes = createAsyncThunk(
     'mes/editarTransacao',
-
     async (transacao: Transacao) => {
         const response = await api.put<Transacao>(`transacao/${transacao.id}`, transacao)
         return { ...response.data } as Transacao;
@@ -89,17 +91,37 @@ export const criaTransacaoMes = createAsyncThunk(
     }
 );
 
+export const editaTransacoesMes = createAsyncThunk(
+    'mes/editarTransacoes',
+    async ({ transacoes, idMes }: { transacoes: Transacao[]; idMes: number }, thunkAPI) => {
+        const response = await api.put<Transacao[]>(`transacao/${idMes}`, transacoes);
+        return response.data;
+    }
+);
+
+export const salvaPorcentagemInvestimento = createAsyncThunk(
+    'mes/atualizaPorcentagemInvestimento',
+    async (idMes: number, { getState }) => {
+        const state = getState() as RootState;
+        const porcentagemInvestimento: number = state.mes.porcentagemInvestimento;
+        await api.put(`mes/investimento/${idMes}`, porcentagemInvestimento);
+    }
+);
 
 const mesSlice = createSlice({
     name: 'mes',
     initialState,
     reducers: {
-        setMesAtual(state, action: PayloadAction<string>) {
+        atualizaTransacao(state, action: PayloadAction<Transacao>) {
+            let indexTransacao = state.transacoes.findIndex(transacao => transacao.id === action.payload.id);
+            if (indexTransacao !== -1) {
+                state.transacoes[indexTransacao] = action.payload;
+            }
 
         },
-        resetMesAtual(state) {
-
-        },
+        atualizaPorcentagemInvestimento(state, action: PayloadAction<number>) {
+            state.porcentagemInvestimento = action.payload;
+        }
     },
     extraReducers: (builder) => {
         builder
@@ -107,7 +129,9 @@ const mesSlice = createSlice({
                 state.id = action.payload.id;
                 state.nome = action.payload.nome;
                 state.ano = action.payload.ano;
-                state.transacoes = action.payload.transacoes;
+                state.transacoes = action.payload.transacoes
+                    .slice()
+                    .sort((a, b) => new Date(a.data).getTime() - new Date(b.data).getTime());;
             })
             .addCase(fetchMesData.rejected, (state, action) => {
                 console.error('Erro ao buscar os dados do mês:', action.payload);
@@ -134,10 +158,10 @@ const mesSlice = createSlice({
                 state.transacoes = state.transacoes.filter(transacao => {
                     return transacao.id && !action.payload.includes(transacao.id)
                 });
-            })
+            });
     }
 });
 
-export const { setMesAtual, resetMesAtual } = mesSlice.actions;
+export const { atualizaTransacao, atualizaPorcentagemInvestimento } = mesSlice.actions;
 
 export default mesSlice.reducer;
