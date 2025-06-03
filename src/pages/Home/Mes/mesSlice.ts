@@ -109,7 +109,7 @@ export const editarTransacaoMes = createAsyncThunk(
 
 export const criaTransacaoMes = createAsyncThunk(
     'mes/criarTransacao',
-    async ({ transacao, idMes }: { transacao: Transacao; idMes: number }, thunkAPI) => {
+    async ({ transacao, idMes }: { transacao: Transacao; idMes: number }) => {
         const response = await api.post<Transacao>(`transacao/${idMes}`, transacao);
         return response.data;
     }
@@ -117,8 +117,8 @@ export const criaTransacaoMes = createAsyncThunk(
 
 export const editaTransacoesMes = createAsyncThunk(
     'mes/editarTransacoes',
-    async ({ transacoes, idMes }: { transacoes: Transacao[]; idMes: number }, thunkAPI) => {
-        const response = await api.put<Transacao[]>(`transacao/${idMes}`, transacoes);
+    async ({ transacoes, idMes }: { transacoes: Transacao[]; idMes: number }) => {
+        const response = await api.put<Transacao[]>(`transacao/${idMes}/batch`, transacoes);
         return response.data;
     }
 );
