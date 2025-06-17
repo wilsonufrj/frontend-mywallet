@@ -14,6 +14,7 @@ export interface AuthState {
     loading: boolean;
     error: string | null;
     idUsuario: number | undefined,
+    idResponsavelUsuario: number | undefined
     nome: string | null,
 }
 
@@ -21,6 +22,7 @@ export interface LoginResponse {
     token: string;
     id: number;
     nome: string;
+    idUsuarioResponsavel: number
 }
 
 export interface LoginCredentials {
@@ -38,6 +40,7 @@ const initialState: AuthState = {
     loading: false,
     error: null,
     idUsuario: undefined,
+    idResponsavelUsuario: undefined,
     nome: null,
 };
 
@@ -93,6 +96,7 @@ const authSlice = createSlice({
                 state.nome = action.payload.nome;
                 state.isAuthenticated = true;
                 state.loading = false;
+                state.idResponsavelUsuario = action.payload.idUsuarioResponsavel
                 localStorage.setItem('token', action.payload.token);
             })
             .addCase(login.rejected, (state, action) => {
@@ -106,6 +110,7 @@ const authSlice = createSlice({
                 state.nome = action.payload.nome;
                 state.isAuthenticated = true;
                 state.loading = false;
+                state.idResponsavelUsuario = action.payload.idUsuarioResponsavel
                 localStorage.setItem('token', action.payload.token);
             })
     },

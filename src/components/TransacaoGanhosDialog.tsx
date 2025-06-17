@@ -36,7 +36,8 @@ const TransacaoGanhosDialog = (props: PropsTransacaoGanhosDialog) => {
 
     const dispatch = useAppDispatch();
 
-    const idUsuario: number | undefined = useSelector((state: RootState) => state.auth.idUsuario);
+    //const idUsuario: number | undefined = useSelector((state: RootState) => state.auth.idUsuario);
+    const idReponsavelUsuario: number | undefined = useSelector((state: RootState) => state.auth.idResponsavelUsuario);
     const mesId: (number | null) = useSelector((state: RootState) => state.mes.id);
 
     const [transacaoData, setTransacaoData] = useState<DataTableTransacao>({} as DataTableTransacao);
@@ -73,7 +74,7 @@ const TransacaoGanhosDialog = (props: PropsTransacaoGanhosDialog) => {
                     banco: { id: getBancoId(transacaoData.banco) } as Banco,
                     formaPagamento: FormaPagamento.PIX,
                     status: TipoStatus.PAGO,
-                    responsavel: { id: idUsuario } as Responsavel,
+                    responsavel: { id: idReponsavelUsuario } as Responsavel,
                     tipoTransacao: TipoTransacao.DEBITO,
                     receita: true
                 } as Transacao

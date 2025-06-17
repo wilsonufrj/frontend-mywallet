@@ -53,7 +53,6 @@ function MesConjunto() {
                 <div id="Title">
                     <div className="flex justify-content-center font-bold text-5xl m-3">
                         <span>{mes.nome}</span>
-                        <span>Mes Conjunto</span>
                     </div>
 
                     <div className="flex mb-3">

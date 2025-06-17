@@ -128,7 +128,8 @@ export const salvaPorcentagemInvestimento = createAsyncThunk(
     async (idMes: number, { getState }) => {
         const state = getState() as RootState;
         const porcentagemInvestimento: number = state.mes.porcentagemInvestimento;
-        await api.put(`mes/investimento/${idMes}`, porcentagemInvestimento);
+        const response = await api.put(`mes/investimento/${idMes}`, porcentagemInvestimento);
+        return response.data;
     }
 );
 
@@ -191,6 +192,10 @@ const mesSlice = createSlice({
                 );
             }
             )
+        builder
+            .addCase(salvaPorcentagemInvestimento.fulfilled, (state, action: PayloadAction<number>) => {
+                state.porcentagemInvestimento = action.payload;
+            })
     }
 });
 

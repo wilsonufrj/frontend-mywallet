@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { Responsavel } from '../../../../Domain/Responsavel';
 import { IDropdown } from '../MesConjunto';
 import { Button } from 'primereact/button';
@@ -17,6 +17,7 @@ import { parseISO } from 'date-fns';
 import { InputText } from 'primereact/inputtext';
 import { Dropdown } from 'primereact/dropdown';
 import { InputNumber } from 'primereact/inputnumber';
+import { Toast } from 'primereact/toast';
 
 declare interface GanhoConjuntoProps {
     responsaveis: Responsavel[],
@@ -30,6 +31,8 @@ const GastoConjunto: React.FC<GanhoConjuntoProps> = ({ responsaveis, bancos }) =
     const carteira: Carteira = useSelector((state: RootState) => state.carteira.carteiraSelected);
     const gastos = useSelector((state: RootState) => state.mes.transacoes)
         .filter((transacao) => !transacao.receita);
+
+    const toast = useRef<Toast>(null);
 
     const handlerAdicionarGastos = () => {
         let addGastos = {
@@ -49,6 +52,7 @@ const GastoConjunto: React.FC<GanhoConjuntoProps> = ({ responsaveis, bancos }) =
 
     return (
         <div className="flex flex-column">
+            <Toast ref={toast} />
             <div className="font-medium">
                 <Button
                     className='ml-3'
@@ -67,7 +71,10 @@ const GastoConjunto: React.FC<GanhoConjuntoProps> = ({ responsaveis, bancos }) =
                         dispatch(editaTransacoesMes({
                             transacoes: gastos,
                             idMes: Number(mes.id)
-                        }));
+                        }))
+                            .then(() => {
+                                toast.current?.show({ severity: 'success', summary: 'Success', detail: 'Dados Salvos com sucesso', life: 3000 })
+                            })
                     }} />
                 <div>
                     {

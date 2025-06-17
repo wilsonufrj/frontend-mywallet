@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
 import { Dropdown } from "primereact/dropdown";
@@ -17,6 +17,10 @@ import { RootState } from "../../../../redux/store";
 import { editarTransacaoMes } from "../mesSlice";
 import { AuthState } from "../../Login/authSlice";
 import { TipoTransacao } from "../../../../enums/TipoTransacao";
+import { Button } from "primereact/button";
+import { Dialog } from "primereact/dialog";
+import { InputText } from "primereact/inputtext";
+import { Toast } from "primereact/toast";
 
 
 const Rateio: React.FC = (props) => {
@@ -29,20 +33,10 @@ const Rateio: React.FC = (props) => {
     const [responsaveis, setResponsaveis] = useState<IDropdownGastos[]>([]);
     const [transacoesFiltered, setTransacoesFiltered] = useState<Transacao[]>([])
     const [responsavel, setResponsavel] = useState<Responsavel>({} as Responsavel);
-
-    useEffect(() => {
-
-        api.get(`responsaveis/usuario/${usuario.idUsuario}`)
-            .then(response => response.data
-                .map((item: any) => {
-                    return {
-                        name: item.nome,
-                        code: item.id
-                    }
-                }))
-            .then(data => setResponsaveis(data))
-
-    }, []);
+    const [visible, setVisible] = useState(false);
+    const [nomeResponsavel, setNomeResponsavel] = useState<string>("");
+    const toast = useRef<Toast>(null);
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         setTransacoesFiltered(
@@ -52,6 +46,21 @@ const Rateio: React.FC = (props) => {
                 .filter(transacao => transacao.responsavel.nome === responsavel.nome)
         )
     }, [responsavel, transacao]);
+
+    const handleDropdownShow = () => {
+        setIsLoading(true);
+        api.get(`responsaveis/usuario/${usuario.idUsuario}`)
+            .then(response => response.data
+                .map((item: any) => {
+                    return {
+                        name: item.nome,
+                        code: item.id
+                    }
+                }))
+            .then(data => setResponsaveis(data))
+            .then(() => setIsLoading(false))
+
+    };
 
     const optionsAux: IDropdownGastos[] = [
         { name: 'Pago', code: TipoStatus.PAGO },
@@ -129,10 +138,29 @@ const Rateio: React.FC = (props) => {
         );
     };
 
+    const dialogFooter = (
+        <React.Fragment>
+            <Button label="Cancel" icon="pi pi-times" outlined onClick={() => setVisible(false)} />
+            <Button label="Save" icon="pi pi-check" onClick={() => {
+                let responsavel = {
+                    nome: nomeResponsavel,
+                    usuarioInfo: { id: usuario.idUsuario }
+                }
+                api.post("/responsaveis",
+                    responsavel
+                ).then(() => {
+                    toast.current?.show({ severity: 'success', summary: 'Success', detail: 'Responsavel salvo com sucesso', life: 3000 })
+                    setVisible(false);
+                })
+            }
+            } />
+        </React.Fragment>
+    );
+
     return (
         <div>
-
-            <div className="">
+            <Toast ref={toast} />
+            <div className="flex row">
                 <div className="field">
                     <label htmlFor="responsavel" className="font-bold block">
                         Responsável
@@ -146,10 +174,35 @@ const Rateio: React.FC = (props) => {
                         } as Responsavel
                         )}
                         options={responsaveis}
+                        onShow={handleDropdownShow}
                         optionLabel="name"
                         placeholder="Selecione o Responsável"
                         className="w-full md:w-14rem"
                         style={{ minWidth: "17rem" }} />
+                    <Button
+                        className="ml-3"
+                        label="Adicionar Responsável"
+                        onClick={() => setVisible(true)}
+                        icon="pi pi-plus"
+                    />
+                    <Dialog
+                        header="Adicionar Responsavel"
+                        visible={visible}
+                        style={{ width: '50vw' }}
+                        footer={dialogFooter}
+                        onHide={() => { if (!visible) return; setVisible(false); }}>
+                        <div className="flex flex-column">
+                            <label htmlFor="description" className="font-bold">
+                                Nome Responsavel
+                            </label>
+                            <InputText id="Nome Responsavel"
+                                value={nomeResponsavel}
+                                className="mt-2"
+                                style={{ width: "30%" }}
+                                onChange={(e) => setNomeResponsavel(e.target.value)}
+                            />
+                        </div>
+                    </Dialog>
                 </div>
             </div>
 

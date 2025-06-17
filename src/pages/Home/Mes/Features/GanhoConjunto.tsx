@@ -1,6 +1,6 @@
 import { Button } from 'primereact/button';
 import { Calendar } from 'primereact/calendar';
-import React from 'react';
+import React, { useRef } from 'react';
 import { TipoStatus } from '../../../../enums/TipoStatus';
 import { TipoTransacao } from '../../../../enums/TipoTransacao';
 import { FormaPagamento } from '../../../../enums/FormaPagamento';
@@ -25,6 +25,7 @@ import {
 import { InputText } from 'primereact/inputtext';
 import { Dropdown } from 'primereact/dropdown';
 import { InputNumber } from 'primereact/inputnumber';
+import { Toast } from 'primereact/toast';
 
 declare interface GanhoConjuntoProps {
     responsaveis: Responsavel[],
@@ -39,6 +40,7 @@ const GanhoConjunto: React.FC<GanhoConjuntoProps> = ({ responsaveis, bancos }) =
     const carteira: Carteira = useSelector((state: RootState) => state.carteira.carteiraSelected);
     const ganhos = useSelector((state: RootState) => state.mes.transacoes)
         .filter((transacao) => transacao.receita);
+    const toast = useRef<Toast>(null);
 
     const handleAdicionarGanhos = (usuario: Usuario) => {
         let addTransacao = {
@@ -79,6 +81,7 @@ const GanhoConjunto: React.FC<GanhoConjuntoProps> = ({ responsaveis, bancos }) =
 
     return (
         <div className="flex flex-column">
+            <Toast ref={toast} />
             <div className="font-medium">
                 {
                     carteira.usuarios.map((usuario: Usuario) => (
@@ -101,7 +104,10 @@ const GanhoConjunto: React.FC<GanhoConjuntoProps> = ({ responsaveis, bancos }) =
                                             dispatch(editaTransacoesMes({
                                                 transacoes: ganhos,
                                                 idMes: Number(mes.id)
-                                            }));
+                                            }))
+                                                .then(() => {
+                                                    toast.current?.show({ severity: 'success', summary: 'Success', detail: 'Dados Salvos com sucesso', life: 3000 })
+                                                })
                                         }} />
                                 </div>
                             </div>

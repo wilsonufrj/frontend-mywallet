@@ -11,6 +11,7 @@ import { IDropdown } from '../MesConjunto';
 import { useAppDispatch } from '../../../../redux/hooks';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../../redux/store';
+import { Toast } from 'primereact/toast';
 
 
 const PlanilhaConjunto: React.FC = () => {
@@ -24,7 +25,7 @@ const PlanilhaConjunto: React.FC = () => {
     const [responsaveis, setResponsaveis] = useState<any[]>([]);
 
     const stepperRef = useRef<any>(null);
-
+    const toast = useRef<Toast>(null);
 
     useEffect(() => {
         api.get("banco")
@@ -63,6 +64,7 @@ const PlanilhaConjunto: React.FC = () => {
                 </div>
             </StepperPanel>
             <StepperPanel header="Porcentagem de Investimento Conjunto">
+                <Toast ref={toast} />
                 <InvestimentoConjunto mes={mes} />
                 <div className="flex pt-4 justify-content-between">
                     <Button label="Back" severity="secondary" icon="pi pi-arrow-left" onClick={() => stepperRef.current.prevCallback()} />
@@ -70,7 +72,10 @@ const PlanilhaConjunto: React.FC = () => {
                         className='ml-3 justify-content-end'
                         icon="pi pi-save"
                         iconPos="right" onClick={() => {
-                            dispatch(salvaPorcentagemInvestimento(Number(mes.id)));
+                            dispatch(salvaPorcentagemInvestimento(Number(mes.id)))
+                                .then(() => {
+                                    toast.current?.show({ severity: 'success', summary: 'Success', detail: 'Dados Salvos com sucesso', life: 3000 })
+                                })
                         }} />
                 </div>
             </StepperPanel>

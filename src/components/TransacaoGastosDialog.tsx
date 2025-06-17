@@ -116,7 +116,7 @@ const TransacaoGastosDialog = (props: IPropsTransacaoGanhosDialog) => {
                     banco: transacaoData.banco,
                     formaPagamento: transacaoData.formaPagamento,
                     status: TipoStatus.NAO_PAGO,
-                    responsavel: transacaoData.responsavel ?? { id: usuario.idUsuario, nome: usuario.nome },
+                    responsavel: transacaoData.responsavel ?? { id: usuario.idResponsavelUsuario, nome: usuario.nome },
                     tipoTransacao: transacaoData.tipoTransacao,
                     receita: false
                 } as Transacao
